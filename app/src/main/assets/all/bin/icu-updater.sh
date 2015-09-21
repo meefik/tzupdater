@@ -1,4 +1,6 @@
 #!/system/bin/sh
+# ICU data updater for Android
+# (C) Anton Skshidlevsky, 2015 <meefik@gmail.com>
 
 DAT_FILES=$(ls /system/usr/icu/*.dat)
 [ -n "${DAT_FILES}" ] || { printf "ICU data not found.\n"; exit 1; }

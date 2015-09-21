@@ -1,7 +1,9 @@
 package ru.meefik.tzupdater;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -69,21 +71,7 @@ public class MainActivity extends AppCompatActivity {
             logger = new Logger(new Runnable() {
                 @Override
                 public void run() {
-                    // show log in TextView
-                    output.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            output.setText(logger.get());
-                            // scroll TextView to bottom
-                            scroll.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    scroll.fullScroll(View.FOCUS_DOWN);
-                                    scroll.clearFocus();
-                                }
-                            });
-                        }
-                    });
+                    showLog(logger.get());
                 }
             }, false);
         }
@@ -127,11 +115,31 @@ public class MainActivity extends AppCompatActivity {
         // restore font size
         output.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
         // restore logs
-        output.setText(logger.get());
-        // show help if empty
-        if (output.getText().length() == 0) {
+        String log = logger.get();
+        if (log.isEmpty()) {
+            // show help if empty
             showHelp();
+        } else {
+            showLog(log);
         }
+    }
+
+    public static void showLog(final String log) {
+        // show log in TextView
+        output.post(new Runnable() {
+            @Override
+            public void run() {
+                output.setText(log);
+                // scroll TextView to bottom
+                scroll.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scroll.fullScroll(View.FOCUS_DOWN);
+                        scroll.clearFocus();
+                    }
+                });
+            }
+        });
     }
 
     public void showHelp() {
@@ -140,18 +148,17 @@ public class MainActivity extends AppCompatActivity {
         output.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
     }
 
-    public static String getTimeZone()
-    {
+    public static String getTimeZone() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
         String timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
         String zone = TimeZone.getDefault().getID();
-        return zone + " (" + timeZone.substring(0, 3) + ":"+ timeZone.substring(3, 5) + ")";
+        return zone + " (" + timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5) + ")";
     }
 
     public static String getTzVersion() {
         String tzVersion = "???";
         String[] arr = {"/data/misc/zoneinfo/tzdata", "/system/usr/share/zoneinfo/tzdata"};
-        for (String tzdata: arr) {
+        for (String tzdata : arr) {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(tzdata);
@@ -176,13 +183,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buttonOnClick(final View view) {
-        view.setEnabled(false);
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                view.setEnabled(true);
-            }
-        }, 30000);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_confirm_dialog)
+                .setMessage(R.string.message_confirm_dialog)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                updateAction();
+                            }
+                        })
+                .setNegativeButton(android.R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        }).show();
+    }
+
+    private void updateAction() {
         logger.clear();
         CheckBox checkTzData = (CheckBox) findViewById(R.id.tzdataUpdate);
         CheckBox checkIcu = (CheckBox) findViewById(R.id.icuUpdate);

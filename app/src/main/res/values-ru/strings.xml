@@ -10,7 +10,7 @@
     <string name="action_source">Исходный код</string>
     <string name="title_activity_about">О программе</string>
     <string name="title_activity_settings">Настройки</string>
-    <string name="checkbox_tzdata">Данные временных зон</string>
+    <string name="checkbox_tzdata">Данные часовых поясов</string>
     <string name="checkbox_icu">Данные ICU</string>
     <string name="start_button">ОБНОВИТЬ</string>
 
@@ -24,6 +24,8 @@
     <string name="dialog_title_fontsize">Размер шрифта</string>
     <string name="title_maxlines">Глубина прокрутки</string>
     <string name="dialog_title_maxlines">Глубина прокрутки</string>
+    <string name="title_confirm_dialog">Обновление</string>
+    <string name="message_confirm_dialog">Начать обновление часовых поясов?</string>
     <string name="debug_preferences">Отладка</string>
     <string name="title_debug">Режим отладки</string>
     <string name="summary_debug">Включить отображение отладочной информации</string>
@@ -33,8 +35,8 @@
     <string name="summary_logger">Сохранять отчеты в файл</string>
     <string name="title_logfile">Файл журнала</string>
     <string name="dialog_title_logfile">Файл журнала</string>
-    <string name="help_text">Приложение скачивает и обновляет до последней версии данные временных зон на устройстве.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Установить BusyBox.\n3. Проверить подключение к интернету.\n4. Нажать кнопку ОБНОВИТЬ.\n5. Перезагрузить устройство.\n\n</string>
-    <string name="tzversion_text">Текущая временная зона:\n%1$s, версия %2$s\n</string>
+    <string name="help_text"><b>Справка</b>\n\nПриложение скачивает и обновляет до последней версии данные часовых поясов на устройстве.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Установить BusyBox.\n3. Проверить подключение к интернету.\n4. Нажать кнопку ОБНОВИТЬ.\n5. Перезагрузить устройство.\n\n</string>
+    <string name="tzversion_text">Текущий часовой пояс:\n%1$s, версия %2$s\n</string>
     <string name="about_text">Эта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\nЛицензировано под GPL версии 3 или более поздней.\n\n&#169; 2015 Антон Скшидлевский</string>
 
     <string-array name="theme_entries">

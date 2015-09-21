@@ -1,4 +1,6 @@
 #!/system/bin/sh
+# Time zones updater for Android
+# (C) Anton Skshidlevsky, 2015 <meefik@gmail.com>
 
 [ -n "${ENV_DIR}" ] || ENV_DIR="."
 OUTPUT_DIR="${ENV_DIR}/tmp"
@@ -48,9 +50,9 @@ return 0
 setup_file()
 {
 printf "Generating setup file ... "
-(cat $TZ_FILES | grep '^Link' | awk '{print $1" "$2" "$3}'
-(cat $TZ_FILES | grep '^Zone' | awk '{print $2}'
-cat $TZ_FILES | grep '^Link' | awk '{print $3}') | LC_ALL=C sort) > ${OUTPUT_DIR}/setup
+(cat ${TZ_FILES} | grep '^Link' | awk '{print $1" "$2" "$3}'
+(cat ${TZ_FILES} | grep '^Zone' | awk '{print $2}'
+cat ${TZ_FILES} | grep '^Link' | awk '{print $3}') | LC_ALL=C sort) > ${OUTPUT_DIR}/setup
 [ -e "${OUTPUT_DIR}/setup" ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }
@@ -101,6 +103,7 @@ return 0
 cleanup()
 {
 printf "Cleaning ... "
+rm /data/misc/zoneinfo/*.bak
 rm -rf "${OUTPUT_DIR}"
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
