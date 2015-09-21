@@ -1,0 +1,66 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/gui_preferences" >
+        <ListPreference
+            android:defaultValue="@string/language"
+            android:dialogTitle="@string/dialog_title_language"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language"
+            android:summary="@string/language"
+            android:title="@string/title_language" />
+
+        <ListPreference
+            android:defaultValue="@string/theme"
+            android:dialogTitle="@string/dialog_title_theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:key="theme"
+            android:summary="@string/theme"
+            android:title="@string/title_theme" />
+
+        <EditTextPreference
+            android:defaultValue="@string/fontsize"
+            android:dialogTitle="@string/dialog_title_fontsize"
+            android:inputType="numberDecimal"
+            android:key="fontsize"
+            android:summary="@string/fontsize"
+            android:title="@string/title_fontsize" />
+
+        <EditTextPreference
+            android:defaultValue="@string/maxlines"
+            android:dialogTitle="@string/dialog_title_maxlines"
+            android:inputType="numberDecimal"
+            android:key="maxlines"
+            android:summary="@string/maxlines"
+            android:title="@string/title_maxlines" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/debug_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/debug"
+            android:key="debug"
+            android:summary="@string/summary_debug"
+            android:title="@string/title_debug" />
+        <CheckBoxPreference
+            android:defaultValue="@string/trace"
+            android:dependency="debug"
+            android:key="trace"
+            android:summary="@string/summary_trace"
+            android:title="@string/title_trace" />
+        <CheckBoxPreference
+            android:defaultValue="@string/logs"
+            android:key="logs"
+            android:summary="@string/summary_logs"
+            android:title="@string/title_logs" />
+
+        <EditTextPreference
+            android:defaultValue="@string/logfile"
+            android:dependency="logs"
+            android:dialogTitle="@string/dialog_title_logfile"
+            android:key="logfile"
+            android:summary="@string/logfile"
+            android:title="@string/title_logfile" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

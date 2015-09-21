@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fontsize" translatable="false">12</string>
+    <string name="maxlines" translatable="false">100</string>
+    <string name="language" translatable="false">en</string>
+    <string name="theme" translatable="false">dark</string>
+    <string name="debug" translatable="false">false</string>
+    <string name="trace" translatable="false">false</string>
+    <string name="logs" translatable="false">false</string>
+    <string name="logfile" translatable="false"></string>
+</resources>
