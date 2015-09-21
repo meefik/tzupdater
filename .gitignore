@@ -3,6 +3,7 @@
 /.idea/workspace.xml
 /.idea/libraries
 
+# Apple
 .DS_Store
 
 # Built application files
