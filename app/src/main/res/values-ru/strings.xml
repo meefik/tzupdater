@@ -29,11 +29,12 @@
     <string name="summary_debug">Включить отображение отладочной информации</string>
     <string name="title_trace">Режим трассировки</string>
     <string name="summary_trace">Перейти в режим трассировки</string>
-    <string name="title_logs">Журналирование</string>
-    <string name="summary_logs">Сохранять отчеты в файл</string>
+    <string name="title_logger">Журналирование</string>
+    <string name="summary_logger">Сохранять отчеты в файл</string>
     <string name="title_logfile">Файл журнала</string>
     <string name="dialog_title_logfile">Файл журнала</string>
-    <string name="help_text">Приложение скачивает и обновляет до последней версии данные временных зон на устройстве.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Установить <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Проверить подключение к интернету.\n4. Нажать кнопку ОБНОВИТЬ.\n5. Перезагрузить устройство.\n</string>
+    <string name="help_text">Приложение скачивает и обновляет до последней версии данные временных зон на устройстве.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Установить BusyBox.\n3. Проверить подключение к интернету.\n4. Нажать кнопку ОБНОВИТЬ.\n5. Перезагрузить устройство.\n\n</string>
+    <string name="tzversion_text">Текущая временная зона:\n%1$s, версия %2$s\n</string>
     <string name="about_text">Эта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\nЛицензировано под GPL версии 3 или более поздней.\n\n&#169; 2015 Антон Скшидлевский</string>
 
     <string-array name="theme_entries">

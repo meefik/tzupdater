@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "ru.meefik.timezoneupdater"
+        applicationId "ru.meefik.tzupdater"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1

@@ -49,14 +49,14 @@
             android:summary="@string/summary_trace"
             android:title="@string/title_trace" />
         <CheckBoxPreference
-            android:defaultValue="@string/logs"
-            android:key="logs"
-            android:summary="@string/summary_logs"
-            android:title="@string/title_logs" />
+            android:defaultValue="@string/logger"
+            android:key="logger"
+            android:summary="@string/summary_logger"
+            android:title="@string/title_logger" />
 
         <EditTextPreference
             android:defaultValue="@string/logfile"
-            android:dependency="logs"
+            android:dependency="logger"
             android:dialogTitle="@string/dialog_title_logfile"
             android:key="logfile"
             android:summary="@string/logfile"

@@ -1,8 +1,6 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,16 +23,10 @@ public class EnvUtils {
 
     private final Context context;
     private final Logger logger;
-    private final String envDir;
-    private boolean debug;
-    private boolean trace;
 
-    public EnvUtils(Context context, Logger logger, boolean debug, boolean trace) {
+    public EnvUtils(Context context, Logger logger) {
         this.context = context;
         this.logger = logger;
-        this.envDir = getEnvDir();
-        this.debug = debug;
-        this.trace = trace;
     }
 
     private boolean extractFile(AssetManager assetManager, String rootAsset, String path) {
@@ -43,7 +34,7 @@ public class EnvUtils {
         OutputStream out = null;
         try {
             in = assetManager.open(rootAsset + path);
-            String fullPath = envDir + path;
+            String fullPath = PrefStore.ENV_DIR + path;
             out = new FileOutputStream(fullPath);
             byte[] buffer = new byte[1024];
             int read;
@@ -79,7 +70,7 @@ public class EnvUtils {
             if (assets.length == 0) {
                 if (!extractFile(assetManager, rootAsset, path)) return false;
             } else {
-                String fullPath = envDir + path;
+                String fullPath = PrefStore.ENV_DIR + path;
                 File dir = new File(fullPath);
                 if (!dir.exists()) dir.mkdir();
                 for (String asset : assets) {
@@ -138,14 +129,13 @@ public class EnvUtils {
     }
 
     // update version file
-    private Boolean setVersion(String version) {
-        if (version == null) return false;
+    private Boolean setVersion() {
         Boolean result = false;
-        String f = envDir + "/etc/version";
+        String f = PrefStore.ENV_DIR + "/etc/version";
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(f));
-            bw.write(version);
+            bw.write(PrefStore.VERSION);
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,15 +152,14 @@ public class EnvUtils {
     }
 
     // check latest env version
-    private Boolean isLatestVersion(String version) {
-        if (version == null) return false;
+    private Boolean isLatestVersion() {
         Boolean result = false;
-        String f = envDir + "/etc/version";
+        String f = PrefStore.ENV_DIR + "/etc/version";
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
             String line = br.readLine();
-            if (version.equals(line)) result = true;
+            if (PrefStore.VERSION.equals(line)) result = true;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -185,29 +174,16 @@ public class EnvUtils {
         return result;
     }
 
-    // get app version
-    public String getVersion() {
-        String version = null;
-        try {
-            PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            version = pi.versionName + "-" + pi.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return version;
-    }
-
     // get env directory
     public String getEnvDir() {
         return context.getFilesDir().getAbsolutePath();
     }
 
     public boolean update() {
-        String version = getVersion();
-        if (isLatestVersion(version)) return true;
+        if (isLatestVersion()) return true;
 
         // prepare env directory
-        File fEnvDir = new File(envDir);
+        File fEnvDir = new File(PrefStore.ENV_DIR);
         fEnvDir.mkdirs();
         if (!fEnvDir.exists()) {
             return false;
@@ -228,15 +204,12 @@ public class EnvUtils {
         setPermissions(fEnvDir);
 
         // update version
-        if (!setVersion(version)) {
-            return false;
-        }
+        return setVersion();
 
-        return true;
     }
 
     public boolean remove() {
-        File fEnvDir = new File(envDir);
+        File fEnvDir = new File(PrefStore.ENV_DIR);
         if (!fEnvDir.exists()) {
             return false;
         }
@@ -332,9 +305,9 @@ public class EnvUtils {
             stdout = process.getInputStream();
             stderr = process.getErrorStream();
 
-            params.add(0, "PATH=" + envDir + "/bin:$PATH");
+            params.add(0, "PATH=" + PrefStore.ENV_DIR + "/bin:$PATH");
             params.add("exit $?");
-            if (trace) params.add(0, "set -x");
+            if (PrefStore.TRACE_MODE) params.add(0, "set -x");
 
             DataOutputStream os = null;
             try {
@@ -366,7 +339,7 @@ public class EnvUtils {
 
             // show stderr log
             final InputStream err = stderr;
-            if (debug || trace) {
+            if (PrefStore.DEBUG_MODE || PrefStore.TRACE_MODE) {
                 (new Thread() {
                     @Override
                     public void run() {

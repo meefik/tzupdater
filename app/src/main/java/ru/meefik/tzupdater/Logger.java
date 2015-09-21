@@ -1,4 +1,7 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
+
+import android.os.Handler;
+import android.os.Looper;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -11,23 +14,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import android.app.Activity;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
 public class Logger {
 
-    private volatile List<String> protocol = new ArrayList<>();
-    private boolean fragment = false;
     private final Handler outputUpdater = new Handler(Looper.getMainLooper());
-    private Activity activity;
-    private boolean timestamp;
+    private volatile List<String> protocol = new ArrayList<>();
+    private boolean fragment = false, timestamp;
+    private Runnable showAction;
 
-    public Logger(Activity activity, boolean timestamp) {
-        this.activity = activity;
+    public Logger(Runnable showAction, boolean timestamp) {
+        this.showAction = showAction;
         this.timestamp = timestamp;
     }
 
@@ -55,15 +50,15 @@ public class Logger {
                         // add the message to List
                         protocol.add(getTimeStamp() + tokens[i]);
                         // remove first line if overflow
-                        if (protocol.size() > PrefStore.MAX_LINE)
+                        if (protocol.size() > PrefStore.MAX_LINES)
                             protocol.remove(0);
                     }
                     // set fragment
                     fragment = (msg.charAt(msgLength - 1) != '\n');
                     // show log
-                    show();
+                    showAction.run();
                     // save the message to file
-                    if (PrefStore.LOGGING) {
+                    if (PrefStore.LOGGER) {
                         saveToFile(msg);
                     }
                 }
@@ -91,31 +86,9 @@ public class Logger {
         }
     }
 
-    public void show() {
-        final TextView output = (TextView) activity.findViewById(R.id.outputView);
-        final ScrollView scroll = (ScrollView) activity.findViewById(R.id.scrollView);
-        // show log in TextView
-        output.post(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(get());
-                // scroll TextView to bottom
-                scroll.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scroll.fullScroll(View.FOCUS_DOWN);
-                        scroll.clearFocus();
-                    }
-                });
-            }
-        });
-    }
-
     public void clear() {
         protocol.clear();
         fragment = false;
-        final TextView output = (TextView) activity.findViewById(R.id.outputView);
-        output.setText("");
     }
 
     public String get() {

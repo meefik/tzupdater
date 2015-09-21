@@ -1,4 +1,4 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

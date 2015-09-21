@@ -1,22 +1,20 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
+import android.support.v7.app.AppCompatActivity;
 
-import java.io.File;
-
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        PrefStore.updateTheme(this);
         super.onCreate(savedInstanceState);
 
         getFragmentManager().beginTransaction()
@@ -28,6 +26,7 @@ public class SettingsActivity extends Activity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            getPreferenceManager().setSharedPreferencesName(PrefStore.APP_PREF_NAME);
             addPreferencesFromResource(R.xml.settings);
             initSummaries(getPreferenceScreen());
         }
@@ -72,13 +71,6 @@ public class SettingsActivity extends Activity {
             if (pref instanceof EditTextPreference) {
                 EditTextPreference editPref = (EditTextPreference) pref;
                 pref.setSummary(editPref.getText());
-
-                if (editPref.getKey().equals("logfile") && editPref.getText().isEmpty()) {
-                    File extStore = Environment.getExternalStorageDirectory();
-                    String logFile = extStore.getAbsolutePath() + "/tzupdater.log";
-                    ((EditTextPreference) pref).setText(logFile);
-                    ((EditTextPreference) pref).setSummary(logFile);
-                }
             }
 
             if (pref instanceof ListPreference) {

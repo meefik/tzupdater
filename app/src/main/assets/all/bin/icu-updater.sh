@@ -11,9 +11,8 @@ REPO_URL="http://source.icu-project.org/repos/icu/data/trunk/tzdata/icunew"
 TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort | tail -1)
 [ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
 printf "Found ICU version: ${TZ_VERSION}\n"
-ICU_URL="${REPO_URL}/${TZ_VERSION}/44"
-ARCH="le"
-RES_FILES="metaZones.res timezoneTypes.res windowsZones.res zoneinfo64.res"
+ICU_URL="${REPO_URL}/${TZ_VERSION}/44/le"
+RES_FILES="zoneinfo64.res windowsZones.res timezoneTypes.res metaZones.res"
 return 0
 }
 
@@ -70,7 +69,7 @@ download()
 for res in ${RES_FILES}
 do
    printf "Downloading ${res} ... "
-   wget -q ${ICU_URL}/${ARCH}/${res} -O ${OUTPUT_DIR}/${res}
+   wget -q ${ICU_URL}/${res} -O ${OUTPUT_DIR}/${res}
    [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 done
 return 0
@@ -83,7 +82,7 @@ do
    printf "Updating ${dat##*/} ... "
    for res in ${RES_FILES}
    do
-      icupkg -a ${OUTPUT_DIR}/${res} ${dat}
+      icupkg -s ${OUTPUT_DIR} -a ${res} ${dat}
       [ $? -eq 0 ] || { printf "fail\n"; return 1; }
    done
    printf "done\n"

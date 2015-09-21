@@ -1,35 +1,24 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 public class AboutActivity extends AppCompatActivity {
 
-    private String getVersion() {
-        String version = "";
-        try {
-            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-            version = pi.versionName + "-" + pi.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return version;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        PrefStore.updateTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
         TextView versionView = (TextView) findViewById(R.id.versionView);
-        versionView.setText(getString(R.string.app_version, getVersion()));
+        versionView.setText(getString(R.string.app_version,
+                PrefStore.getVersion(getApplicationContext())));
     }
 
 
@@ -66,4 +55,5 @@ public class AboutActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -1,4 +1,4 @@
-package ru.meefik.timezoneupdater;
+package ru.meefik.tzupdater;
 
 import java.util.ArrayList;
 import java.util.List;
