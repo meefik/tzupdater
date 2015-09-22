@@ -265,8 +265,6 @@ public class EnvUtils {
 
             if (n > 0) {
                 result = true;
-            } else {
-                logger.log("Require superuser privileges (root).\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -285,6 +283,9 @@ public class EnvUtils {
                     e.printStackTrace();
                 }
             }
+        }
+        if (result == false) {
+            logger.log("Require superuser privileges (root).\n");
         }
         return result;
     }
