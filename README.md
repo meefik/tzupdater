@@ -1,13 +1,32 @@
 # tzupdater
 
-Copyright (C) 2015  Anton Skshidlevsky
+Copyright (C) Anton Skshidlevsky, 2015
 
 Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 
-Приложение для автоматического обновления временных зон Android, поддерживается обновление файлов /data/misc/zoneinfo/tzdata и /system/usr/icu/*.dat. Для работы приложения нужны права суперпользователя. Перед запуском процедуры обновления рекомендуется сделать резервные копии этих файлов или всей системы целиком.
+This app downloads and updates a time zones to latest version on your device. Updated the following files:
 
-#### Source code ####
-Source code: <https://github.com/meefik/tzupdater>. This source code are written with use Android Studio.
+* /data/misc/zoneinfo/tzdata 
+* /system/usr/icu/*.dat
 
-#### Donation ####
-<http://meefik.github.io/donate/>
+Before starting the update procedure is recommended to make backup copies of these files or the entire system.
+
+Requirements:
+
+* Android 4.3 (API 18) or later
+* Superuser permissions (root)
+* BusyBox
+
+Update procedure:
+
+1. Get superuser privileges (root).
+2. Install BusyBox.
+3. Check the connection to Internet.
+4. Tap UPDATE button.
+5. Restart your device.
+
+Referenses:
+
+* [Source code](https://github.com/meefik/tzupdater)
+* [Releases](https://github.com/meefik/tzupdater/release)
+* [Donations](http://meefik.github.io/donate/)
