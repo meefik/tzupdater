@@ -11,13 +11,13 @@ This app downloads and updates a time zones to latest version on your device. Up
 
 Before starting the update procedure is recommended to make backup copies of these files or the entire system.
 
-Requirements:
+**Requirements**:
 
 * Android 4.3 (API 18) or later
 * Superuser permissions (root)
 * BusyBox
 
-Update procedure:
+**Update procedure**:
 
 1. Get superuser privileges (root).
 2. Install BusyBox.
@@ -25,7 +25,7 @@ Update procedure:
 4. Tap UPDATE button.
 5. Restart your device.
 
-Referenses:
+**Referenses**:
 
 * [Source code](https://github.com/meefik/tzupdater)
 * [Releases](https://github.com/meefik/tzupdater/release)
