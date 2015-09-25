@@ -21,15 +21,7 @@ import java.util.List;
  */
 public class EnvUtils {
 
-    private final Context context;
-    private final Logger logger;
-
-    public EnvUtils(Context context, Logger logger) {
-        this.context = context;
-        this.logger = logger;
-    }
-
-    private boolean extractFile(AssetManager assetManager, String rootAsset, String path) {
+    private static boolean extractFile(AssetManager assetManager, String rootAsset, String path) {
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -64,7 +56,7 @@ public class EnvUtils {
         return true;
     }
 
-    private boolean extractDir(AssetManager assetManager, String rootAsset, String path) {
+    private static boolean extractDir(AssetManager assetManager, String rootAsset, String path) {
         try {
             String[] assets = assetManager.list(rootAsset + path);
             if (assets.length == 0) {
@@ -84,7 +76,7 @@ public class EnvUtils {
         return true;
     }
 
-    private void cleanDirectory(File path) {
+    private static void cleanDirectory(File path) {
         if (path == null) return;
         if (path.exists()) {
             for (File f : path.listFiles()) {
@@ -94,7 +86,7 @@ public class EnvUtils {
         }
     }
 
-    private void setPermissions(File path) {
+    private static void setPermissions(File path) {
         if (path == null) return;
         if (path.exists()) {
             for (File f : path.listFiles()) {
@@ -105,7 +97,7 @@ public class EnvUtils {
         }
     }
 
-    private String getArch(String arch) {
+    private static String getArch(String arch) {
         String march = "";
         if (arch.length() > 0) {
             char a = arch.toLowerCase().charAt(0);
@@ -129,7 +121,7 @@ public class EnvUtils {
     }
 
     // update version file
-    private Boolean setVersion() {
+    private static Boolean setVersion() {
         Boolean result = false;
         String f = PrefStore.ENV_DIR + "/etc/version";
         BufferedWriter bw = null;
@@ -152,7 +144,7 @@ public class EnvUtils {
     }
 
     // check latest env version
-    private Boolean isLatestVersion() {
+    private static Boolean isLatestVersion() {
         Boolean result = false;
         String f = PrefStore.ENV_DIR + "/etc/version";
         BufferedReader br = null;
@@ -175,11 +167,11 @@ public class EnvUtils {
     }
 
     // get env directory
-    public String getEnvDir() {
-        return context.getFilesDir().getAbsolutePath();
+    public static String getEnvDir(Context c) {
+        return c.getFilesDir().getAbsolutePath();
     }
 
-    public boolean update() {
+    public static boolean update(Context c) {
         if (isLatestVersion()) return true;
 
         // prepare env directory
@@ -191,7 +183,7 @@ public class EnvUtils {
         cleanDirectory(fEnvDir);
 
         // extract assets
-        AssetManager assetManager = context.getAssets();
+        AssetManager assetManager = c.getAssets();
         if (!extractDir(assetManager, "all", "")) {
             return false;
         }
@@ -208,7 +200,7 @@ public class EnvUtils {
 
     }
 
-    public boolean remove() {
+    public static boolean remove() {
         File fEnvDir = new File(PrefStore.ENV_DIR);
         if (!fEnvDir.exists()) {
             return false;
@@ -217,7 +209,7 @@ public class EnvUtils {
         return true;
     }
 
-    public boolean isRooted() {
+    public static boolean isRooted() {
         boolean result = false;
         OutputStream stdin = null;
         InputStream stdout = null;
@@ -285,14 +277,14 @@ public class EnvUtils {
             }
         }
         if (result == false) {
-            logger.log("Require superuser privileges (root).\n");
+            Logger.log("Require superuser privileges (root).\n");
         }
         return result;
     }
 
-    public boolean exec(List<String> params) {
+    public static boolean exec(List<String> params) {
         if (params == null || params.size() == 0) {
-            logger.log("No scripts for processing.\n");
+            Logger.log("No scripts for processing.\n");
             return false;
         }
         boolean result = false;
@@ -334,7 +326,7 @@ public class EnvUtils {
             (new Thread() {
                 @Override
                 public void run() {
-                    logger.log(out);
+                    Logger.log(out);
                 }
             }).start();
 
@@ -344,7 +336,7 @@ public class EnvUtils {
                 (new Thread() {
                     @Override
                     public void run() {
-                        logger.log(err);
+                        Logger.log(err);
                     }
                 }).start();
             }

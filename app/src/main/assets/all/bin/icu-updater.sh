@@ -1,17 +1,20 @@
 #!/system/bin/sh
 # ICU data updater for Android
-# (C) Anton Skshidlevsky, 2015 <meefik@gmail.com>
+# (c) 2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+TZ_VERSION="$1"
 DAT_FILES=$(ls /system/usr/icu/*.dat)
 [ -n "${DAT_FILES}" ] || { printf "ICU data not found.\n"; exit 1; }
 [ -n "${ENV_DIR}" ] || ENV_DIR="."
 
 icu_version()
 {
-printf "Getting latest version ... "
 REPO_URL="http://source.icu-project.org/repos/icu/data/trunk/tzdata/icunew"
-TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort | tail -1)
-[ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
+if [ -z "${TZ_VERSION}" ]; then
+   printf "Getting latest version ... "
+   TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort | tail -1)
+   [ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
+fi
 printf "Found ICU version: ${TZ_VERSION}\n"
 ICU_URL="${REPO_URL}/${TZ_VERSION}/44/le"
 RES_FILES="zoneinfo64.res windowsZones.res timezoneTypes.res metaZones.res"

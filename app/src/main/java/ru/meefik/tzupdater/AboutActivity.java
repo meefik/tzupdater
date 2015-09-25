@@ -8,6 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+/**
+ * Created by anton on 19.09.15.
+ */
 public class AboutActivity extends AppCompatActivity {
 
     @Override

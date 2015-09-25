@@ -1,7 +1,8 @@
 #!/system/bin/sh
 # Time zones updater for Android
-# (C) Anton Skshidlevsky, 2015 <meefik@gmail.com>
+# (c) 2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+TZ_VERSION="$1"
 [ -n "${ENV_DIR}" ] || ENV_DIR="."
 OUTPUT_DIR="${ENV_DIR}/tmp"
 TZ_DATA="/data/misc/zoneinfo/tzdata"
@@ -10,10 +11,12 @@ TZ_COMPILED="${OUTPUT_DIR}/compiled"
 
 tz_version()
 {
-printf "Getting latest version ... "
 REPO_URL="http://www.iana.org/time-zones"
-TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort | tail -1)
-[ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
+if [ -z "${TZ_VERSION}" ]; then
+   printf "Getting latest version ... "
+   TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort | tail -1)
+   [ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
+fi
 printf "Found tzdata version: ${TZ_VERSION}\n"
 return 0
 }
@@ -36,10 +39,10 @@ return 0
 scan_files()
 {
 printf "Scaning timezone files ... "
-TZ_FILES=$(find ${TZ_EXTRACTED} -type f ! -name 'backward' ! -name 'backzone' | LC_ALL=C sort | 
+TZ_FILES=$(find ${TZ_EXTRACTED} -type f ! -name 'backzone' | LC_ALL=C sort |
 while read f
 do
-   if [ $(grep -c '^Link' $f) -gt 0 ]; then
+   if [ $(grep -c '^Link' $f) -gt 0 -o $(grep -c '^Zone' $f) -gt 0 ]; then
       echo $f
    fi
 done)
@@ -62,6 +65,7 @@ compile()
 printf "Compiling timezones ... "
 for tzfile in ${TZ_FILES}
 do
+   [ "${tzfile##*/}" == "backward" ] && continue
    zic -d ${TZ_COMPILED} ${tzfile}
    [ $? -ne 0 ] && { printf "fail\n"; return 1; }
 done

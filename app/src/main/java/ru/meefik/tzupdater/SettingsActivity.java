@@ -10,6 +10,9 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.support.v7.app.AppCompatActivity;
 
+/**
+ * Created by anton on 19.09.15.
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override

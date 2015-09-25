@@ -23,10 +23,11 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+/**
+ * Created by anton on 18.09.15.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    public static Logger logger;
-    public static EnvUtils envUtils;
     public static TextView output;
     public static ScrollView scroll;
 
@@ -66,19 +67,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        if (logger == null) {
-            logger = new Logger(new Runnable() {
-                @Override
-                public void run() {
-                    showLog(logger.get());
-                }
-            }, false);
-        }
-
-        if (envUtils == null) {
-            envUtils = new EnvUtils(getApplicationContext(), logger);
-        }
     }
 
     @Override
@@ -96,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intentSettings);
                 break;
             case R.id.action_help:
-                logger.clear();
+                Logger.clear();
                 showHelp();
                 break;
             case R.id.action_about:
@@ -111,11 +99,11 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         PrefStore.refresh(this);
-        TextView output = (TextView) findViewById(R.id.outputView);
+        TextView outputView = (TextView) findViewById(R.id.outputView);
         // restore font size
-        output.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
+        outputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
         // restore logs
-        String log = logger.get();
+        String log = Logger.get();
         if (log.isEmpty()) {
             // show help if empty
             showHelp();
@@ -143,9 +131,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showHelp() {
-        TextView output = (TextView) findViewById(R.id.outputView);
-        output.setText(R.string.help_text);
-        output.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
+        TextView outputView = (TextView) findViewById(R.id.outputView);
+        outputView.setText(R.string.help_text);
+        outputView.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
     }
 
     public static String getTimeZone() {
@@ -205,10 +193,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateAction() {
-        logger.clear();
         CheckBox checkTzData = (CheckBox) findViewById(R.id.tzdataUpdate);
         CheckBox checkIcu = (CheckBox) findViewById(R.id.icuUpdate);
-        Thread t = new ExecScript(envUtils, checkTzData.isChecked(), checkIcu.isChecked());
+        Thread t = new ExecScript(this, checkTzData.isChecked(), checkIcu.isChecked());
         t.start();
     }
 

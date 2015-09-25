@@ -14,26 +14,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Created by anton on 19.09.15.
+ */
 public class Logger {
 
-    private final Handler outputUpdater = new Handler(Looper.getMainLooper());
-    private volatile List<String> protocol = new ArrayList<>();
-    private boolean fragment = false, timestamp;
-    private Runnable showAction;
+    private static final Handler outputUpdater = new Handler(Looper.getMainLooper());
+    private static volatile List<String> protocol = new ArrayList<>();
+    private static boolean fragment = false, timestamp = false;
 
-    public Logger(Runnable showAction, boolean timestamp) {
-        this.showAction = showAction;
-        this.timestamp = timestamp;
-    }
-
-    private String getTimeStamp() {
+    private static String getTimeStamp() {
         if (timestamp)
             return "[" + new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(new Date()) + "] ";
         else
             return "";
     }
 
-    private void appendMessage(final String msg) {
+    private static void appendMessage(final String msg) {
         final int msgLength = msg.length();
         if (msgLength > 0) {
             outputUpdater.post(new Runnable() {
@@ -56,7 +53,7 @@ public class Logger {
                     // set fragment
                     fragment = (msg.charAt(msgLength - 1) != '\n');
                     // show log
-                    showAction.run();
+                    MainActivity.showLog(get());
                     // save the message to file
                     if (PrefStore.LOGGER) {
                         saveToFile(msg);
@@ -66,7 +63,7 @@ public class Logger {
         }
     }
 
-    private void saveToFile(String msg) {
+    private static void saveToFile(String msg) {
         byte[] data = msg.getBytes();
         FileOutputStream fos = null;
         try {
@@ -86,20 +83,24 @@ public class Logger {
         }
     }
 
-    public void clear() {
+    public static void setTimestamp(boolean ts) {
+        timestamp = ts;
+    }
+
+    public static void clear() {
         protocol.clear();
         fragment = false;
     }
 
-    public String get() {
+    public static String get() {
         return android.text.TextUtils.join("\n", protocol);
     }
 
-    public void log(String msg) {
+    public static void log(String msg) {
         appendMessage(msg);
     }
 
-    public void log(InputStream stream) {
+    public static void log(InputStream stream) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));
