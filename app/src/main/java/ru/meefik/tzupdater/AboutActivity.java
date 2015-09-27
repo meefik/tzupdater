@@ -42,6 +42,9 @@ public class AboutActivity extends AppCompatActivity {
             case R.id.menu_donate:
                 url = "http://meefik.github.io/donate";
                 break;
+            case R.id.menu_forum:
+                url = "http://4pda.ru/forum/index.php?showtopic=692805";
+                break;
             case R.id.menu_doc:
                 url = "https://github.com/meefik/tzupdater/wiki";
                 break;

@@ -5,6 +5,7 @@
     <string name="action_help">Справка</string>
     <string name="action_about">О программе</string>
     <string name="action_donate">Поддержать</string>
+    <string name="action_forum">Обсуждения</string>
     <string name="action_doc">Документация</string>
     <string name="action_issues">Вопросы</string>
     <string name="action_source">Исходный код</string>
