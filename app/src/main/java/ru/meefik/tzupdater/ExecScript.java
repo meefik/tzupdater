@@ -26,9 +26,9 @@ public class ExecScript extends Thread {
         // update env
         if (!EnvUtils.update(context)) return;
         // check root
-        if (!EnvUtils.isRooted()) return;
+        if (!EnvUtils.isRooted(context)) return;
         // exec command
-        String envDir = EnvUtils.getEnvDir(context);
+        String envDir = PrefStore.getEnvDir(context);
         List<String> params = new ArrayList<>();
         params.add("ENV_DIR=" + envDir);
         if (tzdata) {
@@ -41,6 +41,7 @@ public class ExecScript extends Thread {
             params.add("(. " + envDir + "/bin/icu-updater.sh)");
             params.add("printf '.\n'");
         }
-        EnvUtils.exec(params);
+        EnvUtils.exec(context, params);
     }
+
 }

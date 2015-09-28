@@ -1,5 +1,17 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 // usage: java ZoneCompiler <setup file> <data directory> <tzdata file> <tzdata version>
 //
 // Compile a set of tzfile-formatted files into a single file containing an index.

@@ -15,7 +15,6 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PrefStore.updateTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
@@ -60,6 +59,11 @@ public class AboutActivity extends AppCompatActivity {
             startActivity(browserIntent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
     }
 
 }

@@ -17,11 +17,18 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PrefStore.updateTheme(this);
         super.onCreate(savedInstanceState);
+
+        // init variables
+        PrefStore.getLogFile(this);
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new MyPreferenceFragment()).commit();
+    }
+
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment implements
@@ -58,6 +65,11 @@ public class SettingsActivity extends AppCompatActivity {
             super.onPause();
         }
 
+        /**
+         * Recursive set summaries
+         *
+         * @param pg
+         */
         private void initSummaries(PreferenceGroup pg) {
             for (int i = 0; i < pg.getPreferenceCount(); ++i) {
                 Preference p = pg.getPreference(i);
@@ -70,6 +82,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * Set summary for preference
+         *
+         * @param pref preference
+         * @param init true if no recursive
+         */
         private void setSummary(Preference pref, boolean init) {
             if (pref instanceof EditTextPreference) {
                 EditTextPreference editPref = (EditTextPreference) pref;

@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +22,36 @@ import java.util.List;
  */
 public class EnvUtils {
 
-    private static boolean extractFile(AssetManager assetManager, String rootAsset, String path) {
+    /**
+     * Closeable helper
+     *
+     * @param c closable object
+     */
+    private static void close(Closeable c) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Extract file to env directory
+     *
+     * @param c         context
+     * @param rootAsset root asset name
+     * @param path      path to asset file
+     * @return false if error
+     */
+    private static boolean extractFile(Context c, String rootAsset, String path) {
+        AssetManager assetManager = c.getAssets();
         InputStream in = null;
         OutputStream out = null;
         try {
             in = assetManager.open(rootAsset + path);
-            String fullPath = PrefStore.ENV_DIR + path;
+            String fullPath = PrefStore.getEnvDir(c) + path;
             out = new FileOutputStream(fullPath);
             byte[] buffer = new byte[1024];
             int read;
@@ -38,35 +63,32 @@ public class EnvUtils {
             e.printStackTrace();
             return false;
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(in);
+            close(out);
         }
         return true;
     }
 
-    private static boolean extractDir(AssetManager assetManager, String rootAsset, String path) {
+    /**
+     * Extract path to env directory
+     *
+     * @param c         context
+     * @param rootAsset root asset name
+     * @param path      path to asset directory
+     * @return false if error
+     */
+    private static boolean extractDir(Context c, String rootAsset, String path) {
+        AssetManager assetManager = c.getAssets();
         try {
             String[] assets = assetManager.list(rootAsset + path);
             if (assets.length == 0) {
-                if (!extractFile(assetManager, rootAsset, path)) return false;
+                if (!extractFile(c, rootAsset, path)) return false;
             } else {
-                String fullPath = PrefStore.ENV_DIR + path;
+                String fullPath = PrefStore.getEnvDir(c) + path;
                 File dir = new File(fullPath);
                 if (!dir.exists()) dir.mkdir();
                 for (String asset : assets) {
-                    if (!extractDir(assetManager, rootAsset, path + "/" + asset)) return false;
+                    if (!extractDir(c, rootAsset, path + "/" + asset)) return false;
                 }
             }
         } catch (IOException e) {
@@ -76,6 +98,11 @@ public class EnvUtils {
         return true;
     }
 
+    /**
+     * Recursive remove all from directory
+     *
+     * @param path path to directory
+     */
     private static void cleanDirectory(File path) {
         if (path == null) return;
         if (path.exists()) {
@@ -86,6 +113,11 @@ public class EnvUtils {
         }
     }
 
+    /**
+     * Recursive set permissions to directory
+     *
+     * @param path path to directory
+     */
     private static void setPermissions(File path) {
         if (path == null) return;
         if (path.exists()) {
@@ -97,85 +129,61 @@ public class EnvUtils {
         }
     }
 
-    private static String getArch(String arch) {
-        String march = "";
-        if (arch.length() > 0) {
-            char a = arch.toLowerCase().charAt(0);
-            switch (a) {
-                case 'a':
-                    if (arch.equals("amd64"))
-                        march = "intel";
-                    else
-                        march = "arm";
-                    break;
-                case 'm':
-                    march = "mips";
-                    break;
-                case 'i':
-                case 'x':
-                    march = "intel";
-                    break;
-            }
-        }
-        return march;
-    }
-
-    // update version file
-    private static Boolean setVersion() {
+    /**
+     * Update version file
+     *
+     * @param c context
+     * @return false if error
+     */
+    private static Boolean setVersion(Context c) {
         Boolean result = false;
-        String f = PrefStore.ENV_DIR + "/etc/version";
+        String f = PrefStore.getEnvDir(c) + "/etc/version";
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(f));
-            bw.write(PrefStore.VERSION);
+            bw.write(PrefStore.getVersion(c));
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(bw);
         }
         return result;
     }
 
-    // check latest env version
-    private static Boolean isLatestVersion() {
+    /**
+     * Check latest env version
+     *
+     * @param c context
+     * @return false if error
+     */
+    private static Boolean isLatestVersion(Context c) {
         Boolean result = false;
-        String f = PrefStore.ENV_DIR + "/etc/version";
+        String f = PrefStore.getEnvDir(c) + "/etc/version";
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
             String line = br.readLine();
-            if (PrefStore.VERSION.equals(line)) result = true;
+            if (PrefStore.getVersion(c).equals(line)) result = true;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(br);
         }
         return result;
     }
 
-    // get env directory
-    public static String getEnvDir(Context c) {
-        return c.getFilesDir().getAbsolutePath();
-    }
-
+    /**
+     * Update env directory
+     *
+     * @param c context
+     * @return false if error
+     */
     public static boolean update(Context c) {
-        if (isLatestVersion()) return true;
+        if (isLatestVersion(c)) return true;
 
         // prepare env directory
-        File fEnvDir = new File(PrefStore.ENV_DIR);
+        File fEnvDir = new File(PrefStore.getEnvDir(c));
         fEnvDir.mkdirs();
         if (!fEnvDir.exists()) {
             return false;
@@ -183,12 +191,11 @@ public class EnvUtils {
         cleanDirectory(fEnvDir);
 
         // extract assets
-        AssetManager assetManager = c.getAssets();
-        if (!extractDir(assetManager, "all", "")) {
+        if (!extractDir(c, "all", "")) {
             return false;
         }
-        String mArch = getArch(System.getProperty("os.arch"));
-        if (!extractDir(assetManager, mArch, "")) {
+        String mArch = PrefStore.getArch(System.getProperty("os.arch"));
+        if (!extractDir(c, mArch, "")) {
             return false;
         }
 
@@ -196,12 +203,17 @@ public class EnvUtils {
         setPermissions(fEnvDir);
 
         // update version
-        return setVersion();
-
+        return setVersion(c);
     }
 
-    public static boolean remove() {
-        File fEnvDir = new File(PrefStore.ENV_DIR);
+    /**
+     * Remove env directory
+     *
+     * @param c context
+     * @return false if error
+     */
+    public static boolean remove(Context c) {
+        File fEnvDir = new File(PrefStore.getEnvDir(c));
         if (!fEnvDir.exists()) {
             return false;
         }
@@ -209,7 +221,13 @@ public class EnvUtils {
         return true;
     }
 
-    public static boolean isRooted() {
+    /**
+     * Check root permissions
+     *
+     * @param c context
+     * @return false if error
+     */
+    public static boolean isRooted(Context c) {
         boolean result = false;
         OutputStream stdin = null;
         InputStream stdout = null;
@@ -227,13 +245,7 @@ public class EnvUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                close(os);
             }
 
             int n = 0;
@@ -246,13 +258,7 @@ public class EnvUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                close(reader);
             }
 
             if (n > 0) {
@@ -261,30 +267,25 @@ public class EnvUtils {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (stdout != null) {
-                try {
-                    stdout.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (stdin != null) {
-                try {
-                    stdin.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(stdout);
+            close(stdin);
         }
         if (result == false) {
-            Logger.log("Require superuser privileges (root).\n");
+            Logger.log(c, "Require superuser privileges (root).\n");
         }
         return result;
     }
 
-    public static boolean exec(List<String> params) {
+    /**
+     * Execute commands from system shell
+     *
+     * @param c      context
+     * @param params list of commands
+     * @return false if error
+     */
+    public static boolean exec(final Context c, final List<String> params) {
         if (params == null || params.size() == 0) {
-            Logger.log("No scripts for processing.\n");
+            Logger.log(c, "No scripts for processing.\n");
             return false;
         }
         boolean result = false;
@@ -298,9 +299,9 @@ public class EnvUtils {
             stdout = process.getInputStream();
             stderr = process.getErrorStream();
 
-            params.add(0, "PATH=" + PrefStore.ENV_DIR + "/bin:$PATH");
+            params.add(0, "PATH=" + PrefStore.getEnvDir(c) + "/bin:$PATH");
             params.add("exit $?");
-            if (PrefStore.TRACE_MODE) params.add(0, "set -x");
+            if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
 
             DataOutputStream os = null;
             try {
@@ -312,13 +313,7 @@ public class EnvUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                close(os);
             }
 
             // show stdout log
@@ -326,17 +321,17 @@ public class EnvUtils {
             (new Thread() {
                 @Override
                 public void run() {
-                    Logger.log(out);
+                    Logger.log(c, out);
                 }
             }).start();
 
             // show stderr log
             final InputStream err = stderr;
-            if (PrefStore.DEBUG_MODE || PrefStore.TRACE_MODE) {
+            if (PrefStore.isDebugMode(c) || PrefStore.isTraceMode(c)) {
                 (new Thread() {
                     @Override
                     public void run() {
-                        Logger.log(err);
+                        Logger.log(c, err);
                     }
                 }).start();
             }
@@ -347,27 +342,9 @@ public class EnvUtils {
             result = false;
             e.printStackTrace();
         } finally {
-            if (stdout != null) {
-                try {
-                    stdout.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (stderr != null) {
-                try {
-                    stderr.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (stdin != null) {
-                try {
-                    stdin.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            close(stdout);
+            close(stderr);
+            close(stdin);
         }
         return result;
     }

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PrefStore.refresh(this);
+        PrefStore.setLocale(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -96,12 +96,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        PrefStore.refresh(this);
         TextView outputView = (TextView) findViewById(R.id.outputView);
         // restore font size
-        outputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
+        outputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
         // restore logs
         String log = Logger.get();
         if (log.isEmpty()) {

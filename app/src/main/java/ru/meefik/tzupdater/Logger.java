@@ -1,5 +1,6 @@
 package ru.meefik.tzupdater;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -23,6 +24,11 @@ public class Logger {
     private static volatile List<String> protocol = new ArrayList<>();
     private static boolean fragment = false, timestamp = false;
 
+    /**
+     * Generate timestamp
+     *
+     * @return timestamp
+     */
     private static String getTimeStamp() {
         if (timestamp)
             return "[" + new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(new Date()) + "] ";
@@ -30,7 +36,13 @@ public class Logger {
             return "";
     }
 
-    private static void appendMessage(final String msg) {
+    /**
+     * Append the message to protocol and show
+     *
+     * @param c   context
+     * @param msg message
+     */
+    private static void appendMessage(final Context c, final String msg) {
         final int msgLength = msg.length();
         if (msgLength > 0) {
             outputUpdater.post(new Runnable() {
@@ -47,27 +59,34 @@ public class Logger {
                         // add the message to List
                         protocol.add(getTimeStamp() + tokens[i]);
                         // remove first line if overflow
-                        if (protocol.size() > PrefStore.MAX_LINES)
+                        if (protocol.size() > PrefStore.getMaxLines(c)) {
                             protocol.remove(0);
+                        }
                     }
                     // set fragment
                     fragment = (msg.charAt(msgLength - 1) != '\n');
                     // show log
                     MainActivity.showLog(get());
                     // save the message to file
-                    if (PrefStore.LOGGER) {
-                        saveToFile(msg);
+                    if (PrefStore.isLogger(c)) {
+                        saveToFile(c, msg);
                     }
                 }
             });
         }
     }
 
-    private static void saveToFile(String msg) {
+    /**
+     * Append message to file
+     *
+     * @param c   context
+     * @param msg message
+     */
+    private static void saveToFile(Context c, String msg) {
         byte[] data = msg.getBytes();
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(PrefStore.LOG_FILE, true);
+            fos = new FileOutputStream(PrefStore.getLogFile(c), true);
             fos.write(data);
             fos.flush();
         } catch (Exception e) {
@@ -83,24 +102,49 @@ public class Logger {
         }
     }
 
+    /**
+     * Toggle timestamp on/off
+     *
+     * @param ts on if true
+     */
     public static void setTimestamp(boolean ts) {
         timestamp = ts;
     }
 
+    /**
+     * Clear protocol
+     */
     public static void clear() {
         protocol.clear();
         fragment = false;
     }
 
+    /**
+     * Get protocol
+     *
+     * @return protocol as text
+     */
     public static String get() {
         return android.text.TextUtils.join("\n", protocol);
     }
 
-    public static void log(String msg) {
-        appendMessage(msg);
+    /**
+     * Append message to protocol
+     *
+     * @param c   context
+     * @param msg message
+     */
+    public static void log(Context c, String msg) {
+        appendMessage(c, msg);
     }
 
-    public static void log(InputStream stream) {
+    /**
+     * Append stream messages to protocol
+     *
+     * @param c      context
+     * @param stream stream
+     */
+    public static void log(Context c, InputStream stream) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));
@@ -108,7 +152,7 @@ public class Logger {
             char[] buffer = new char[1024];
             while ((n = reader.read(buffer)) != -1) {
                 String msg = String.valueOf(buffer, 0, n);
-                appendMessage(msg);
+                appendMessage(c, msg);
             }
         } catch (IOException e) {
             e.printStackTrace();
