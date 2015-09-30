@@ -3,9 +3,11 @@
 # (c) 2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
 TZ_VERSION="$1"
-DAT_FILES=$(ls /system/usr/icu/*.dat)
+ICU_DIR="/system/usr/icu"
+DAT_FILES=$(cd ${ICU_DIR}; ls *.dat)
 [ -n "${DAT_FILES}" ] || { printf "ICU data not found.\n"; exit 1; }
 [ -n "${ENV_DIR}" ] || ENV_DIR="."
+OUTPUT_DIR="${ENV_DIR}/tmp"
 
 icu_version()
 {
@@ -21,12 +23,6 @@ RES_FILES="zoneinfo64.res windowsZones.res timezoneTypes.res metaZones.res"
 return 0
 }
 
-mk_output()
-{
-OUTPUT_DIR="${ENV_DIR}/tmp"
-[ -d "${OUTPUT_DIR}" ] || mkdir -p ${OUTPUT_DIR}
-}
-
 mount_rw()
 {
 printf "Remount /system to rw ... "
@@ -39,7 +35,7 @@ mount_ro()
 {
 printf "Remount /system to ro ... "
 mount -o ro,remount /system
-[ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+[ $? -eq 0 ] && printf "done\n" || { printf "skip\n"; return 1; }
 return 0
 }
 
@@ -47,9 +43,9 @@ backup()
 {
 for dat in ${DAT_FILES}
 do
-   printf "Backuping ${dat##*/} ... "
-   if [ -e "${dat}" ]; then
-      cp ${dat} ${dat}.bak
+   printf "Backuping ${dat} ... "
+   if [ -e "${ICU_DIR}/${dat}" ]; then
+      cp ${ICU_DIR}/${dat} ${OUTPUT_DIR}/${dat}
    fi
    [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 done
@@ -60,9 +56,9 @@ restore()
 {
 for dat in ${DAT_FILES}
 do
-   printf "Restoring ${dat##*/} ... "
-   if [ -e "${dat}.bak" ]; then
-      cp ${dat}.bak ${dat}
+   printf "Restoring ${dat} ... "
+   if [ -e "${OUTPUT_DIR}/${dat}" ]; then
+      cp ${OUTPUT_DIR}/${dat} ${ICU_DIR}/${dat}
    fi
    [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 done
@@ -71,6 +67,7 @@ return 0
 
 download()
 {
+[ -d "${OUTPUT_DIR}" ] || mkdir -p ${OUTPUT_DIR}
 for res in ${RES_FILES}
 do
    printf "Downloading ${res} ... "
@@ -84,10 +81,10 @@ update()
 {
 for dat in ${DAT_FILES}
 do
-   printf "Updating ${dat##*/} ... "
+   printf "Updating ${dat} ... "
    for res in ${RES_FILES}
    do
-      icupkg -s ${OUTPUT_DIR} -a ${res} ${dat}
+      icupkg -s ${OUTPUT_DIR} -a ${res} ${ICU_DIR}/${dat}
       [ $? -eq 0 ] || { printf "fail\n"; return 1; }
    done
    printf "done\n"
@@ -98,8 +95,7 @@ return 0
 cleanup()
 {
 printf "Cleaning ... "
-rm /system/usr/icu/*.bak
-rm -rf "${OUTPUT_DIR}"
+rm -r "${OUTPUT_DIR}"
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }
@@ -111,12 +107,13 @@ exit 1
 }
 
 icu_version || error
-mk_output
-mount_rw
-download || { cleanup; mount_ro; error; }
+download || { cleanup; error; }
+mount_rw || { cleanup; error; }
 backup || { cleanup; mount_ro; error; }
 update || { restore; cleanup; mount_ro; error; }
 cleanup
 mount_ro
+
+sync
 
 exit 0

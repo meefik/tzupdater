@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        PrefStore.setLocale(this);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         outputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
         // restore logs
         String log = Logger.get();
-        if (log.isEmpty()) {
+        if (log.length() == 0) {
             // show help if empty
             showHelp();
         } else {
@@ -116,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Show message in TextView, used from Logger
+     * @param log message
+     */
     public static void showLog(final String log) {
         // show log in TextView
         output.post(new Runnable() {
@@ -142,20 +148,22 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getTimeZone() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
-        String timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
+        String timeZone = new SimpleDateFormat("Z", Locale.US).format(calendar.getTime());
         String zone = TimeZone.getDefault().getID();
         return zone + " (" + timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5) + ")";
     }
 
     public static String getTzVersion() {
         String tzVersion = "???";
-        String[] arr = {"/data/misc/zoneinfo/tzdata", "/system/usr/share/zoneinfo/tzdata"};
+        String[] arr = {"/data/misc/zoneinfo/tzdata", "/system/usr/share/zoneinfo/tzdata", "/system/usr/share/zoneinfo/zoneinfo.version"};
         for (String tzdata : arr) {
             FileInputStream fis = null;
             try {
-                fis = new FileInputStream(tzdata);
+                File file = new File(tzdata);
+                if (!file.exists()) continue;
+                fis = new FileInputStream(file);
                 byte[] buffer = new byte[5];
-                fis.skip(6);
+                if (file.getName().equals("tzdata")) fis.skip(6);
                 fis.read(buffer);
                 tzVersion = new String(buffer, "UTF-8");
             } catch (IOException e) {

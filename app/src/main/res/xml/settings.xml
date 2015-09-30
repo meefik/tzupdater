@@ -34,6 +34,12 @@
             android:key="maxlines"
             android:summary="@string/maxlines"
             android:title="@string/title_maxlines" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/timestamp"
+            android:key="timestamp"
+            android:summary="@string/summary_timestamp"
+            android:title="@string/title_timestamp" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/debug_preferences" >

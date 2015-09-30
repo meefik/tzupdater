@@ -24,6 +24,8 @@
     <string name="dialog_title_fontsize">Font size</string>
     <string name="title_maxlines">Scroll size</string>
     <string name="dialog_title_maxlines">Scroll size</string>
+    <string name="title_timestamp">Timestamp</string>
+    <string name="summary_timestamp">Show timestamp</string>
     <string name="title_confirm_dialog">Update</string>
     <string name="message_confirm_dialog">Start a time zones update?</string>
     <string name="debug_preferences">Debug</string>

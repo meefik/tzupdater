@@ -24,6 +24,8 @@
     <string name="dialog_title_fontsize">Размер шрифта</string>
     <string name="title_maxlines">Глубина прокрутки</string>
     <string name="dialog_title_maxlines">Глубина прокрутки</string>
+    <string name="title_timestamp">Отметка времени</string>
+    <string name="summary_timestamp">Отображать отметку времени</string>
     <string name="title_confirm_dialog">Обновление</string>
     <string name="message_confirm_dialog">Начать обновление часовых поясов?</string>
     <string name="debug_preferences">Отладка</string>

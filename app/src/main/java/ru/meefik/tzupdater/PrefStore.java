@@ -72,7 +72,7 @@ public class PrefStore {
             }
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("language", language);
-            editor.apply();
+            editor.commit();
         }
         return language;
     }
@@ -118,6 +118,17 @@ public class PrefStore {
     public static int getMaxLines(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         return Integer.parseInt(pref.getString("maxlines", c.getString(R.string.maxlines)));
+    }
+
+    /**
+     * Timestamp is enabled
+     *
+     * @param c context
+     * @return true if enabled
+     */
+    public static boolean isTimestamp(Context c) {
+        SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean("timestamp", c.getString(R.string.timestamp).equals("true"));
     }
 
     /**

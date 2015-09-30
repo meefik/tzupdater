@@ -1,7 +1,9 @@
 package ru.meefik.tzupdater;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Build;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -123,7 +125,7 @@ public class EnvUtils {
         if (path.exists()) {
             for (File f : path.listFiles()) {
                 if (f.isDirectory()) setPermissions(f);
-                f.setReadable(true);
+                f.setReadable(true, false);
                 f.setExecutable(true, false);
             }
         }

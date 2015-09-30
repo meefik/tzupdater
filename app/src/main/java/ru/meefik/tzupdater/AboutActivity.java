@@ -15,6 +15,7 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        PrefStore.setLocale(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
@@ -26,6 +27,7 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        PrefStore.setLocale(this);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_about, menu);
         return true;

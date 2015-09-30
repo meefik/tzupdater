@@ -5,9 +5,34 @@
 TZ_VERSION="$1"
 [ -n "${ENV_DIR}" ] || ENV_DIR="."
 OUTPUT_DIR="${ENV_DIR}/tmp"
-TZ_DATA="/data/misc/zoneinfo/tzdata"
 TZ_EXTRACTED="${OUTPUT_DIR}/extracted"
 TZ_COMPILED="${OUTPUT_DIR}/compiled"
+TZ_SETUP="${OUTPUT_DIR}/setup"
+
+android_version()
+{
+if [ -e "/system/usr/share/zoneinfo/tzdata" ]; then
+   echo "new"
+elif [ -e "/system/usr/share/zoneinfo/zoneinfo.dat" ]; then
+   echo "legacy"
+fi
+}
+
+mount_rw()
+{
+printf "Remount /system to rw ... "
+mount -o rw,remount /system
+[ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+return 0
+}
+
+mount_ro()
+{
+printf "Remount /system to ro ... "
+mount -o ro,remount /system
+[ $? -eq 0 ] && printf "done\n" || { printf "skip\n"; return 1; }
+return 0
+}
 
 tz_version()
 {
@@ -21,16 +46,10 @@ printf "Found tzdata version: ${TZ_VERSION}\n"
 return 0
 }
 
-mk_output()
-{
-[ -e "${OUTPUT_DIR}" ] || mkdir ${OUTPUT_DIR}
-[ -e "${TZ_EXTRACTED}" ] || mkdir ${TZ_EXTRACTED}
-[ -e "${TZ_COMPILED}" ] || mkdir ${TZ_COMPILED}
-}
-
 download()
 {
 printf "Downloading tzdata${TZ_VERSION}.tar.gz ... "
+[ -e "${TZ_EXTRACTED}" ] || mkdir -p ${TZ_EXTRACTED}
 wget -q -O - "http://www.iana.org/time-zones/repository/releases/tzdata${TZ_VERSION}.tar.gz" | tar xz -C ${TZ_EXTRACTED}
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
@@ -55,14 +74,15 @@ setup_file()
 printf "Generating setup file ... "
 (cat ${TZ_FILES} | grep '^Link' | awk '{print $1" "$2" "$3}'
 (cat ${TZ_FILES} | grep '^Zone' | awk '{print $2}'
-cat ${TZ_FILES} | grep '^Link' | awk '{print $3}') | LC_ALL=C sort) > ${OUTPUT_DIR}/setup
-[ -e "${OUTPUT_DIR}/setup" ] && printf "done\n" || { printf "fail\n"; return 1; }
+cat ${TZ_FILES} | grep '^Link' | awk '{print $3}') | LC_ALL=C sort) > ${TZ_SETUP}
+[ -e "${TZ_SETUP}" ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }
 
 compile()
 {
 printf "Compiling timezones ... "
+[ -e "${TZ_COMPILED}" ] || mkdir -p ${TZ_COMPILED}
 for tzfile in ${TZ_FILES}
 do
    [ "${tzfile##*/}" == "backward" ] && continue
@@ -76,30 +96,54 @@ return 0
 backup()
 {
 printf "Backuping tzdata ... "
-if [ -e "${TZ_DATA}" ]; then
-   cp ${TZ_DATA} ${TZ_DATA}.bak
+for tzdata in ${TZDATA_FILES}
+do
+if [ -e "${ZONEINFO_DIR}/${tzdata}" ]; then
+   cp ${ZONEINFO_DIR}/${tzdata} ${OUTPUT_DIR}/${tzdata}
+   [ $? -eq 0 ] || { printf "fail\n"; return 1; }
 fi
-[ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+done
+printf "done\n"
 return 0
 }
 
 restore()
 {
 printf "Restoring tzdata ... "
-if [ -e "${TZ_DATA}.bak" ]; then
-   cp ${TZ_DATA}.bak ${TZ_DATA}
+for tzdata in ${TZDATA_FILES}
+do
+if [ -e "${OUTPUT_DIR}/${tzdata}" ]; then
+   cp ${OUTPUT_DIR}/${tzdata} ${ZONEINFO_DIR}/${tzdata}
+   [ $? -eq 0 ] || { printf "fail\n"; return 1; }
 fi
-[ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+done
+printf "done\n"
 return 0
 }
 
 update()
 {
 printf "Updating tzdata ... "
-dalvikvm -cp ${ENV_DIR}/bin/ZoneCompactor.dex ZoneCompactor ${OUTPUT_DIR}/setup ${TZ_COMPILED} ${TZ_EXTRACTED}/zone.tab ${TZ_DATA} tzdata${TZ_VERSION}
+[ -e "${ZONEINFO_DIR}" ] || mkdir ${ZONEINFO_DIR}
+dalvikvm -cp ${ENV_DIR}/bin/ZoneCompactor.dex ZoneCompactor ${TZ_SETUP} ${TZ_COMPILED} ${TZ_EXTRACTED}/zone.tab ${ZONEINFO_DIR} ${TZ_VERSION}
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+return 0
+}
+
+update_legacy()
+{
+printf "Updating tzdata ... "
+[ -e "${ZONEINFO_DIR}" ] || mkdir ${ZONEINFO_DIR}
+dalvikvm -cp ${ENV_DIR}/bin/ZoneCompactorLegacy.dex ZoneCompactor ${TZ_SETUP} ${TZ_COMPILED} ${ZONEINFO_DIR} ${TZ_VERSION}
+[ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
+return 0
+}
+
+set_permissions()
+{
 printf "Set permissions ... "
-chmod 644 ${TZ_DATA}
+chmod 755 ${ZONEINFO_DIR}
+chmod 644 ${ZONEINFO_DIR}/*
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }
@@ -107,8 +151,7 @@ return 0
 cleanup()
 {
 printf "Cleaning ... "
-rm /data/misc/zoneinfo/*.bak
-rm -rf "${OUTPUT_DIR}"
+rm -r "${OUTPUT_DIR}"
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }
@@ -119,14 +162,41 @@ printf "An error has occurred. Exiting.\n"
 exit 1
 }
 
-tz_version || error
-mk_output
-download || { cleanup; error; }
-scan_files || { cleanup; error; }
-setup_file || { cleanup; error; }
-compile || { cleanup; error; }
-backup || { cleanup; error; }
-update || { restore; cleanup; error; }
-cleanup
+case $(android_version) in
+new)
+   ZONEINFO_DIR="/data/misc/zoneinfo"
+   TZDATA_FILES="tzdata"
+   tz_version || error
+   download || { cleanup; error; }
+   scan_files || { cleanup; error; }
+   setup_file || { cleanup; error; }
+   compile || { cleanup; error; }
+   backup || { cleanup; error; }
+   update || { restore; cleanup; error; }
+   set_permissions || { restore; cleanup; error; }
+   cleanup
+;;
+legacy)
+   ZONEINFO_DIR="/system/usr/share/zoneinfo"
+   TZDATA_FILES="zoneinfo.dat zoneinfo.idx zoneinfo.version"
+   tz_version || error
+   download || { cleanup; error; }
+   scan_files || { cleanup; error; }
+   setup_file || { cleanup; error; }
+   compile || { cleanup; error; }
+   mount_rw || { cleanup; error; }
+   backup || { cleanup; mount_ro; error; }
+   update_legacy || { restore; cleanup; mount_ro; error; }
+   set_permissions || { restore; cleanup; mount_ro; error; }
+   cleanup
+   mount_ro
+;;
+*)
+   printf "Time zones database not found.\n"
+   error
+;;
+esac
+
+sync
 
 exit 0

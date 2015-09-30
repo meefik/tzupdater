@@ -22,7 +22,7 @@ public class Logger {
 
     private static final Handler outputUpdater = new Handler(Looper.getMainLooper());
     private static volatile List<String> protocol = new ArrayList<>();
-    private static boolean fragment = false, timestamp = false;
+    private static boolean fragment = false;
 
     /**
      * Generate timestamp
@@ -30,10 +30,7 @@ public class Logger {
      * @return timestamp
      */
     private static String getTimeStamp() {
-        if (timestamp)
-            return "[" + new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(new Date()) + "] ";
-        else
-            return "";
+        return "[" + new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(new Date()) + "] ";
     }
 
     /**
@@ -47,6 +44,7 @@ public class Logger {
         if (msgLength > 0) {
             outputUpdater.post(new Runnable() {
                 public void run() {
+                    final boolean timestamp = PrefStore.isTimestamp(c);
                     String[] tokens = msg.split("\\n");
                     int lastIndex = protocol.size() - 1;
                     for (int i = 0, l = tokens.length; i < l; i++) {
@@ -57,7 +55,8 @@ public class Logger {
                             continue;
                         }
                         // add the message to List
-                        protocol.add(getTimeStamp() + tokens[i]);
+                        if (timestamp) protocol.add(getTimeStamp() + tokens[i]);
+                        else protocol.add(tokens[i]);
                         // remove first line if overflow
                         if (protocol.size() > PrefStore.getMaxLines(c)) {
                             protocol.remove(0);
@@ -100,15 +99,6 @@ public class Logger {
                 }
             }
         }
-    }
-
-    /**
-     * Toggle timestamp on/off
-     *
-     * @param ts on if true
-     */
-    public static void setTimestamp(boolean ts) {
-        timestamp = ts;
     }
 
     /**
