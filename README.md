@@ -4,7 +4,7 @@
 
 Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 
-This app downloads and updates a time zones to latest version on your device. Updated the following files:
+This app downloads and updates a time zones to latest version on your device. This update should fix all known problems with time zones, such as incorrect time in Android and some applications. Updated the following files:
 
 * /data/misc/zoneinfo/tzdata or /system/usr/share/zoneinfo/*
 * /system/usr/icu/*.dat
