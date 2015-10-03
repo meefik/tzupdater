@@ -61,7 +61,7 @@ public class PrefStore {
     public static String getLanguage(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String language = pref.getString("language", c.getString(R.string.language));
-        if (language.length() == 0) {
+        if (language.isEmpty()) {
             String countryCode = Locale.getDefault().getLanguage();
             switch (countryCode) {
                 case "ru":
@@ -72,7 +72,7 @@ public class PrefStore {
             }
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("language", language);
-            editor.commit();
+            editor.apply();
         }
         return language;
     }
@@ -105,8 +105,19 @@ public class PrefStore {
      * @return font size
      */
     public static int getFontSize(Context c) {
+        Integer fontSizeInt;
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
-        return Integer.parseInt(pref.getString("fontsize", c.getString(R.string.fontsize)));
+        String fontSize = pref.getString("fontsize", c.getString(R.string.fontsize));
+        try {
+            fontSizeInt = Integer.parseInt(fontSize);
+        } catch (Exception e) {
+            fontSize = c.getString(R.string.fontsize);
+            fontSizeInt = Integer.parseInt(fontSize);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("fontsize", fontSize);
+            editor.apply();
+        }
+        return fontSizeInt;
     }
 
     /**
@@ -116,8 +127,19 @@ public class PrefStore {
      * @return number of lines
      */
     public static int getMaxLines(Context c) {
+        Integer maxLinesInt;
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
-        return Integer.parseInt(pref.getString("maxlines", c.getString(R.string.maxlines)));
+        String maxLines = pref.getString("maxlines", c.getString(R.string.maxlines));
+        try {
+            maxLinesInt = Integer.parseInt(maxLines);
+        } catch (Exception e) {
+            maxLines = c.getString(R.string.maxlines);
+            maxLinesInt = Integer.parseInt(maxLines);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("maxlines", maxLines);
+            editor.apply();
+        }
+        return maxLinesInt;
     }
 
     /**
@@ -173,7 +195,7 @@ public class PrefStore {
     public static String getLogFile(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String logFile = pref.getString("logfile", c.getString(R.string.logfile));
-        if (logFile.length() == 0) {
+        if (logFile.isEmpty()) {
             logFile = getStorage() + "/tzupdater.log";
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("logfile", logFile);
@@ -190,7 +212,7 @@ public class PrefStore {
      */
     public static String getArch(String arch) {
         String march = "";
-        if (arch.length() > 0) {
+        if (!arch.isEmpty()) {
             char a = arch.toLowerCase().charAt(0);
             switch (a) {
                 case 'a':

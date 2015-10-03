@@ -147,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getTimeZone() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
-        String timeZone = new SimpleDateFormat("Z", Locale.US).format(calendar.getTime());
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
+        String timeZone = new SimpleDateFormat("Z", Locale.ENGLISH).format(calendar.getTime());
         String zone = TimeZone.getDefault().getID();
         return zone + " (" + timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5) + ")";
     }
