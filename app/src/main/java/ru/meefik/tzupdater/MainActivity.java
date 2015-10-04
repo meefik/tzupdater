@@ -105,9 +105,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        TextView outputView = (TextView) findViewById(R.id.outputView);
         // restore font size
-        outputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
+        output.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
         // restore logs
         String log = Logger.get();
         if (log.length() == 0) {
@@ -141,9 +140,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showHelp() {
-        TextView outputView = (TextView) findViewById(R.id.outputView);
-        outputView.setText(R.string.help_text);
-        outputView.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
+        output.setText(R.string.help_text);
+        output.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
     }
 
     public static String getTimeZone() {
@@ -207,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateAction() {
         CheckBox checkTzData = (CheckBox) findViewById(R.id.tzdataUpdate);
         CheckBox checkIcu = (CheckBox) findViewById(R.id.icuUpdate);
-        Thread t = new ExecScript(this, checkTzData.isChecked(), checkIcu.isChecked());
+        Thread t = new ExecScript(getApplicationContext(), checkTzData.isChecked(), checkIcu.isChecked());
         t.start();
     }
 
