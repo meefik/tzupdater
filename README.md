@@ -15,7 +15,7 @@ Before starting the update procedure is recommended to make backup copies of the
 
 * Android 2.3 (API 9) or later
 * Superuser permissions (root)
-* BusyBox
+* [BusyBox](https://github.com/meefik/busybox)
 
 **Update procedure**:
 
@@ -28,5 +28,5 @@ Before starting the update procedure is recommended to make backup copies of the
 **Referenses**:
 
 * [Source code](https://github.com/meefik/tzupdater)
-* [Releases](https://github.com/meefik/tzupdater/release)
+* [Releases](https://github.com/meefik/tzupdater/releases)
 * [Donations](http://meefik.github.io/donate/)
