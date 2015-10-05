@@ -37,9 +37,9 @@
     <string name="summary_logger">Save logs to a file</string>
     <string name="title_logfile">Log file</string>
     <string name="dialog_title_logfile">Log file</string>
-    <string name="help_text"><b>Help</b>\n\nThis app downloads and updates a time zones to latest version on your device.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install BusyBox.\n3. Check the connection to Internet.\n4. Tap UPDATE button.\n5. Restart the device.\n\n</string>
+    <string name="help_text"><b>Help</b>\n\nThis app downloads and updates a time zones to latest version on your device.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Check the connection to Internet.\n4. Tap UPDATE button.\n5. Restart the device.\n\n</string>
     <string name="tzversion_text">Current time zone:\n%1$s, version %2$s\n</string>
-    <string name="about_text">This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2015 Anton Skshidlevsky</string>
+    <string name="about_text">This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2015 <a href="http://meefik.ru">Anton Skshidlevsky</a></string>
 
     <string-array name="language_entries" translatable="false">
         <item>English</item>
