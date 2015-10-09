@@ -30,45 +30,6 @@ public class AboutActivity extends AppCompatActivity {
         aboutView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        PrefStore.setLocale(this);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_about, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        String url = null;
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.menu_donate:
-                url = "http://meefik.github.io/donate";
-                break;
-            case R.id.menu_forum:
-                url = "http://4pda.ru/forum/index.php?showtopic=692805";
-                break;
-            case R.id.menu_doc:
-                url = "https://github.com/meefik/tzupdater/wiki";
-                break;
-            case R.id.menu_issues:
-                url = "https://github.com/meefik/tzupdater/issues";
-                break;
-            case R.id.menu_source:
-                url = "https://github.com/meefik/tzupdater";
-                break;
-        }
-        if (url != null) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void setTheme(int resid) {
         super.setTheme(PrefStore.getTheme(this));
