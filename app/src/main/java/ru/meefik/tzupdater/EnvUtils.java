@@ -285,7 +285,7 @@ public class EnvUtils {
      * @param params list of commands
      * @return false if error
      */
-    public static boolean exec(final Context c, final List<String> params) {
+    public static boolean exec(final Context c, final String shell, final List<String> params) {
         if (params == null || params.size() == 0) {
             Logger.log(c, "No scripts for processing.\n");
             return false;
@@ -295,7 +295,7 @@ public class EnvUtils {
         InputStream stdout = null;
         InputStream stderr = null;
         try {
-            Process process = Runtime.getRuntime().exec("su");
+            Process process = Runtime.getRuntime().exec(shell);
 
             stdin = process.getOutputStream();
             stdout = process.getInputStream();
