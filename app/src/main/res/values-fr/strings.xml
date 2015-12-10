@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_version">version %1$s</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_help">Aide</string>
+    <string name="action_about">À propos</string>
+    <string name="title_activity_about">À propos</string>
+    <string name="title_activity_settings">Paramètres</string>
+    <string name="checkbox_tzdata">Données fuseaux horaires</string>
+    <string name="checkbox_icu">Données ICU</string>
+    <string name="start_button">METTRE À JOUR</string>
+
+    <string name="gui_preferences">Interface</string>
+    <string name="title_language">Langue</string>
+    <string name="dialog_title_language">Choisir une langue</string>
+    <string name="title_theme">Thème</string>
+    <string name="dialog_title_theme">Choisir un thème</string>
+    <string name="title_fontsize">Taille de la police</string>
+    <string name="dialog_title_fontsize">Taille de la police</string>
+    <string name="title_maxlines">Taille de défilement</string>
+    <string name="dialog_title_maxlines">Taille de défilement</string>
+    <string name="title_timestamp">Horodatage</string>
+    <string name="summary_timestamp">Afficher l\'horodatage</string>
+    <string name="title_confirm_dialog">Mettre à jour</string>
+    <string name="message_confirm_dialog">Démarrer une mise à jour des fuseaux horaires ?</string>
+    <string name="debug_preferences">Débogage</string>
+    <string name="title_debug">Mode débogage</string>
+    <string name="summary_debug">Afficher les informations de débogage</string>
+    <string name="title_trace">Mode trace</string>
+    <string name="summary_trace">Activer le mode traçage</string>
+    <string name="title_logger">Journalisation</string>
+    <string name="summary_logger">Sauvegarder les journaux dans un fichier</string>
+    <string name="title_logfile">Fichier journal</string>
+    <string name="dialog_title_logfile">Fichier journal</string>
+    <string name="help_text"><b>Aide</b>\n\nCette application télécharge et met à jour les fuseaux horaires à la dernière version sur votre appareil.\n\nProcédure :\n1. Obtenir les droits super-utilisateur (root).\n2. Installer <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Vérifier la connexion à internet.\n4. Appuyer sur le bouton METTRE À JOUR.\n5. Redémarrer l\'appareil.\n\n</string>
+    <string name="tzversion_text">Fuseau horaire actuel :\n%1$s, version %2$s\n</string>
+    <string name="about_text">Mise à jour automatique des fuseaux horaires pour Android.\n\nPour plus d\'informations, aller sur <a href="https://github.com/meefik/tzupdater">la page du projet</a>, <a href="http://4pda.ru/forum/index.php?showtopic=692805">le forum</a> ou <a href="http://meefik.ru">le site du développeur</a>.\n\n&#169; 2015 Anton Skshidlevsky, GPLv3</string>
+
+    <string-array name="theme_entries">
+        <item>Sombre</item>
+        <item>Clair</item>
+    </string-array>
+</resources>
