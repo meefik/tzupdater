@@ -6,7 +6,8 @@
 if [ "$1" == "clean" ]; then
 find . -name "*.class" -exec rm {} \;
 else
-DX="$HOME/android-sdk-linux/build-tools/*/dx"
+[ -z "$ANDROID_SDK_ROOT" ] && ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+DX="$ANDROID_SDK_ROOT/build-tools/*/dx"
 javac -source 1.5 -target 1.5 -d . ZoneCompactor.java libcore/util/ZoneInfo.java libcore/io/BufferIterator.java
 ${DX} --dex --output=ZoneCompactor.dex $(find . -name '*.class' -type f)
 fi
