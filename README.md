@@ -1,6 +1,6 @@
 # tzupdater
 
-Copyright (C) 2015 Anton Skshidlevsky, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
+Copyright (C) 2015-2017 Anton Skshidlevsky, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
 
 This app downloads and updates a time zones to latest version on your device. This update should fix all known problems with time zones, such as incorrect time in Android and some applications. Updated the following files:
 

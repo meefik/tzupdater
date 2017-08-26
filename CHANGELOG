@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.0.3
+Fixed problem with showing menu button
+
 1.0.2
 Translated into French
 
@@ -10,6 +13,9 @@ Added support Android 2.3 and later
 
 История изменений (Русский)
 ===========================
+
+1.0.3
+Исправлена проблема с отображением кнопки меню
 
 1.0.2
 Переведено на французский язык

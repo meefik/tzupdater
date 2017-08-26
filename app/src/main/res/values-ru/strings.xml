@@ -3,13 +3,13 @@
     <string name="action_settings">Настройки</string>
     <string name="action_help">Справка</string>
     <string name="action_about">О программе</string>
+    <string name="action_menu">Меню</string>
     <string name="title_activity_about">О программе</string>
     <string name="title_activity_settings">Настройки</string>
-    <string name="checkbox_tzdata">Данные часовых поясов</string>
+    <string name="checkbox_tzdata">Данные TZ</string>
     <string name="checkbox_icu">Данные ICU</string>
     <string name="start_button">ОБНОВИТЬ</string>
 
-    <string name="dialog_title_tzversion">Версия</string>
     <string name="gui_preferences">Интерфейс</string>
     <string name="title_language">Язык</string>
     <string name="dialog_title_language">Язык интерфейса</string>

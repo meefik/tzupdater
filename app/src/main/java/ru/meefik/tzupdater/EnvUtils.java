@@ -1,9 +1,7 @@
 package ru.meefik.tzupdater;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Build;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
