@@ -23,7 +23,7 @@ Before starting the update procedure is recommended to make backup copies of the
 4. Tap UPDATE button.
 5. Restart your device.
 
-**Referenses**:
+**References**:
 
 * [Source code](https://github.com/meefik/tzupdater)
 * [Releases](https://github.com/meefik/tzupdater/releases)
