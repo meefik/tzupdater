@@ -1,6 +1,6 @@
 # tzupdater
 
-Copyright (C) 2015-2017 Anton Skshidlevsky, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
+Copyright (C) 2015-2018 Anton Skshidlevsky, GPLv3
 
 This app downloads and updates a time zones to latest version on your device. This update should fix all known problems with time zones, such as incorrect time in Android and some applications. Updated the following files:
 
@@ -11,7 +11,7 @@ Before starting the update procedure is recommended to make backup copies of the
 
 **Requirements**:
 
-* Android 2.3 (API 9) or later
+* Android 4.0 (API 14) or later
 * Superuser permissions (root)
 * [BusyBox](https://github.com/meefik/busybox)
 

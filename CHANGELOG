@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.1.0
+Added support .res format version 03.00 (issue #4)
+
 1.0.3
 Fixed problem with showing menu button
 
@@ -13,6 +16,9 @@ Added support Android 2.3 and later
 
 История изменений (Русский)
 ===========================
+
+1.1.0
+Добавлена поддержка .res format version 03.00 (тикет #4)
 
 1.0.3
 Исправлена проблема с отображением кнопки меню
