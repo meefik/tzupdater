@@ -11,14 +11,14 @@ OUTPUT_DIR="${ENV_DIR}/tmp"
 
 icu_version()
 {
-REPO_URL="http://source.icu-project.org/repos/icu/data/trunk/tzdata/icunew"
+REPO_URL="https://api.github.com/repos/unicode-org/icu-data/contents/tzdata/icunew?ref=master"
 if [ -z "${TZ_VERSION}" ]; then
    printf "Getting latest version ... "
-   TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort -u | tail -n1)
+   TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep '"name"' | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort -u | tail -n1)
    [ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
 fi
 printf "Found ICU version: ${TZ_VERSION}\n"
-ICU_URL="${REPO_URL}/${TZ_VERSION}/44/le"
+ICU_URL="https://raw.githubusercontent.com/unicode-org/icu-data/master/tzdata/icunew/${TZ_VERSION}/44/le"
 RES_FILES="zoneinfo64.res windowsZones.res timezoneTypes.res metaZones.res"
 return 0
 }
