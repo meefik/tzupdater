@@ -38,7 +38,7 @@ tz_version()
 {
 if [ -z "${TZ_VERSION}" ]; then
    printf "Getting latest version ... "
-   TZ_VERSION=$(wget -q -O - "https://data.iana.org/time-zones/" | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort -u | tail -n1)
+   TZ_VERSION=$(wget -q -O - "http://data.iana.org/time-zones/" | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort -u | tail -n1)
    [ -n "${TZ_VERSION}" ] && printf "done\n" || { printf "fail\n"; return 1; }
 fi
 printf "Found tzdata version: ${TZ_VERSION}\n"
@@ -49,7 +49,7 @@ download()
 {
 printf "Downloading tzdata${TZ_VERSION}.tar.gz ... "
 [ -e "${TZ_EXTRACTED}" ] || mkdir -p ${TZ_EXTRACTED}
-wget -q -O - "https://data.iana.org/time-zones/releases/tzdata${TZ_VERSION}.tar.gz" | tar xz -C ${TZ_EXTRACTED}
+wget -q -O - "http://data.iana.org/time-zones/releases/tzdata${TZ_VERSION}.tar.gz" | tar xz -C ${TZ_EXTRACTED}
 [ $? -eq 0 ] && printf "done\n" || { printf "fail\n"; return 1; }
 return 0
 }

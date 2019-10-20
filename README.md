@@ -1,6 +1,6 @@
 # tzupdater
 
-Copyright (C) 2015-2018 Anton Skshidlevsky, GPLv3
+Copyright (C) 2015-2019 Anton Skshidlevsky, GPLv3
 
 This app downloads and updates a time zones to latest version on your device. This update should fix all known problems with time zones, such as incorrect time in Android and some applications. Updated the following files:
 
@@ -27,4 +27,4 @@ Before starting the update procedure is recommended to make backup copies of the
 
 * [Source code](https://github.com/meefik/tzupdater)
 * [Releases](https://github.com/meefik/tzupdater/releases)
-* [Donations](http://meefik.github.io/donate/)
+* [Donations](http://meefik.github.io/donate)
