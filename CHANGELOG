@@ -1,5 +1,8 @@
-Changelog (English)
-===================
+Changelog
+=========
+
+1.2.0
+Moving ICU data repository on Github
 
 1.1.0
 Added support .res format version 03.00 (issue #4)
@@ -12,19 +15,3 @@ Translated into French
 
 1.0.1
 Added support Android 2.3 and later
-
-
-История изменений (Русский)
-===========================
-
-1.1.0
-Добавлена поддержка .res format version 03.00 (тикет #4)
-
-1.0.3
-Исправлена проблема с отображением кнопки меню
-
-1.0.2
-Переведено на французский язык
-
-1.0.1
-Добавлена поддержка Android 2.3 и выше
