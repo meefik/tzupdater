@@ -11,7 +11,7 @@ OUTPUT_DIR="${ENV_DIR}/tmp"
 
 icu_version()
 {
-REPO_URL="https://api.github.com/repos/unicode-org/icu-data/contents/tzdata/icunew?ref=master"
+REPO_URL="https://api.github.com/repos/unicode-org/icu-data/contents/tzdata/icunew?ref=main"
 if [ -z "${TZ_VERSION}" ]; then
    printf "Getting latest version ... "
    TZ_VERSION=$(wget -q -O - ${REPO_URL} | grep '"name"' | grep -o '[0-9]\{4\}[a-z]\{1\}' | sort -u | tail -n1)
