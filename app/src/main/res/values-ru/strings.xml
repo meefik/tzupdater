@@ -34,7 +34,7 @@
     <string name="dialog_title_logfile">Файл журнала</string>
     <string name="help_text"><b>Справка</b>\n\nПриложение скачивает и обновляет до последней версии данные часовых поясов на устройстве.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Установить <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Проверить подключение к интернету.\n4. Нажать кнопку ОБНОВИТЬ.\n5. Перезагрузить устройство.\n\n</string>
     <string name="tzversion_text">Текущий часовой пояс:\n%1$s, версия %2$s\n</string>
-    <string name="about_text">Автоматическое обновление часовых поясов Android.\n\nЗа дополнительной информацией обращайтесь на <a href="https://github.com/meefik/tzupdater">страницу проекта</a>, <a href="http://4pda.ru/forum/index.php?showtopic=692805">форум</a> или <a href="http://meefik.ru">сайт разработчика</a>.\n\n&#169; 2015 Антон Скшидлевский, GPLv3</string>
+    <string name="about_text">Автоматическое обновление часовых поясов Android.\n\nЗа дополнительной информацией обращайтесь на <a href="https://github.com/meefik/tzupdater">страницу проекта</a> или <a href="https://meefik.github.io/tzupdater">сайт разработчика</a>.\n\n&#169; 2015 Антон Скшидлевский, GPLv3</string>
 
     <string-array name="theme_entries">
         <item>Темная</item>

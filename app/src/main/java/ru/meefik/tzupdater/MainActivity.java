@@ -1,10 +1,7 @@
 package ru.meefik.tzupdater;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -12,9 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,124 +23,26 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Created by anton on 18.09.15.
- */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static TextView output;
     public static ScrollView scroll;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        PrefStore.setLocale(this);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        final CheckBox checkTzData = (CheckBox) findViewById(R.id.tzdataUpdate);
-        final CheckBox checkIcu = (CheckBox) findViewById(R.id.icuUpdate);
-        final Button button = (Button) findViewById(R.id.button);
-        output = (TextView) findViewById(R.id.outputView);
-        scroll = (ScrollView) findViewById(R.id.scrollView);
-
-        // enable context clickable
-        output.setMovementMethod(LinkMovementMethod.getInstance());
-
-        checkTzData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton view, boolean isChecked) {
-                if (isChecked || checkIcu.isChecked()) {
-                    button.setEnabled(true);
-                } else {
-                    button.setEnabled(false);
-                }
-            }
-        });
-
-        checkIcu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton view, boolean isChecked) {
-                if (isChecked || checkTzData.isChecked()) {
-                    button.setEnabled(true);
-                } else {
-                    button.setEnabled(false);
-                }
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        PrefStore.setLocale(this);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intentSettings = new Intent(this, SettingsActivity.class);
-                startActivity(intentSettings);
-                break;
-            case R.id.action_help:
-                Logger.clear();
-                showHelp();
-                break;
-            case R.id.action_about:
-                Intent intentAbout = new Intent(this, AboutActivity.class);
-                startActivity(intentAbout);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void setTheme(int resid) {
-        super.setTheme(PrefStore.getTheme(this));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // restore font size
-        output.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
-        // restore logs
-        String log = Logger.get();
-        if (log.length() == 0) {
-            // show help if empty
-            showHelp();
-        } else {
-            showLog(log);
-        }
-    }
-
     /**
      * Show message in TextView, used from Logger
+     *
      * @param log message
      */
     public static void showLog(final String log) {
         // show log in TextView
-        output.post(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(log);
-                // scroll TextView to bottom
-                scroll.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scroll.fullScroll(View.FOCUS_DOWN);
-                        scroll.clearFocus();
-                    }
-                });
-            }
+        output.post(() -> {
+            output.setText(log);
+            // scroll TextView to bottom
+            scroll.post(() -> {
+                scroll.fullScroll(View.FOCUS_DOWN);
+                scroll.clearFocus();
+            });
         });
-    }
-
-    public void showHelp() {
-        output.setText(R.string.help_text);
-        output.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
     }
 
     public static String getTimeZone() {
@@ -153,7 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getTzVersion() {
         String tzVersion = "???";
-        String[] arr = {"/data/misc/zoneinfo/tzdata", "/system/usr/share/zoneinfo/tzdata", "/system/usr/share/zoneinfo/zoneinfo.version"};
+        String[] arr = {
+                "/data/misc/zoneinfo/tzdata",
+                "/system/usr/share/zoneinfo/tzdata",
+                "/system/usr/share/zoneinfo/zoneinfo.version"
+        };
         for (String tzdata : arr) {
             FileInputStream fis = null;
             try {
@@ -180,6 +85,68 @@ public class MainActivity extends AppCompatActivity {
         return tzVersion;
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        scroll = findViewById(R.id.scrollView);
+        output = findViewById(R.id.outputView);
+        // enable context clickable
+        output.setMovementMethod(LinkMovementMethod.getInstance());
+
+        final Button button = findViewById(R.id.button);
+        final CheckBox checkTzData = findViewById(R.id.tzdataUpdate);
+        final CheckBox checkIcu = findViewById(R.id.icuUpdate);
+        checkTzData.setOnCheckedChangeListener((view, isChecked) -> button.setEnabled(isChecked || checkIcu.isChecked()));
+        checkIcu.setOnCheckedChangeListener((view, isChecked) -> button.setEnabled(isChecked || checkTzData.isChecked()));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intentSettings = new Intent(this, SettingsActivity.class);
+                startActivity(intentSettings);
+                break;
+            case R.id.action_help:
+                Logger.clear();
+                showHelp();
+                break;
+            case R.id.action_about:
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // restore font size
+        output.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.getFontSize(this));
+        // restore logs
+        String log = Logger.get();
+        if (log.length() == 0) {
+            // show help if empty
+            showHelp();
+        } else {
+            showLog(log);
+        }
+    }
+
+    public void showHelp() {
+        output.setText(R.string.help_text);
+        output.append(getString(R.string.tzversion_text, getTimeZone(), getTzVersion()));
+    }
+
     public void buttonOnClick(final View view) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.title_confirm_dialog)
@@ -187,24 +154,14 @@ public class MainActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                updateAction();
-                            }
-                        })
+                        (dialog, id) -> updateAction())
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     private void updateAction() {
-        CheckBox checkTzData = (CheckBox) findViewById(R.id.tzdataUpdate);
-        CheckBox checkIcu = (CheckBox) findViewById(R.id.icuUpdate);
+        CheckBox checkTzData = findViewById(R.id.tzdataUpdate);
+        CheckBox checkIcu = findViewById(R.id.icuUpdate);
         Thread t = new ExecScript(getApplicationContext(), checkTzData.isChecked(), checkIcu.isChecked());
         t.start();
     }

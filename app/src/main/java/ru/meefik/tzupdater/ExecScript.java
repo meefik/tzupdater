@@ -5,23 +5,20 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by anton on 19.09.15.
- */
 public class ExecScript extends Thread {
 
-    private Context context;
-    private boolean tzdata;
-    private boolean icu;
+    private final Context context;
+    private final boolean tzdata;
+    private final boolean icu;
 
-    public ExecScript(Context c, boolean tzdata, boolean icu) {
+    ExecScript(Context c, boolean tzdata, boolean icu) {
         this.context = c;
         this.tzdata = tzdata;
         this.icu = icu;
     }
 
     private void updateTzData() {
-        String envDir = PrefStore.getEnvDir(context);
+        String envDir = PrefStore.getFilesDir(context);
         List<String> params = new ArrayList<>();
         params.add("ENV_DIR=" + envDir);
         params.add(". " + envDir + "/bin/tzdata-updater.sh");
@@ -29,7 +26,7 @@ public class ExecScript extends Thread {
     }
 
     private void updateIcuData() {
-        String envDir = PrefStore.getEnvDir(context);
+        String envDir = PrefStore.getFilesDir(context);
         List<String> params = new ArrayList<>();
         params.add("ENV_DIR=" + envDir);
         params.add(". " + envDir + "/bin/icu-updater.sh");

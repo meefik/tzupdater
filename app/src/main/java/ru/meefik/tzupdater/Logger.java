@@ -13,12 +13,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by anton on 19.09.15.
- */
 public class Logger {
 
-    private static volatile List<String> protocol = new ArrayList<>();
+    private static final List<String> protocol = new ArrayList<>();
     private static boolean fragment = false;
 
     /**
@@ -40,7 +37,10 @@ public class Logger {
         final int msgLength = msg.length();
         if (msgLength > 0) {
             final boolean timestamp = PrefStore.isTimestamp(c);
-            String[] tokens = msg.split("\\n");
+            String[] tokens = {""};
+            if (!"\n".equals(msg)) {
+                tokens = msg.split("\\n");
+            }
             int lastIndex = protocol.size() - 1;
             for (int i = 0, l = tokens.length; i < l; i++) {
                 // update last record from List if fragment
@@ -97,7 +97,7 @@ public class Logger {
     /**
      * Clear protocol
      */
-    public static void clear() {
+    static void clear() {
         protocol.clear();
         fragment = false;
     }
@@ -107,7 +107,7 @@ public class Logger {
      *
      * @return protocol as text
      */
-    public static String get() {
+    static String get() {
         return android.text.TextUtils.join("\n", protocol);
     }
 
@@ -117,7 +117,7 @@ public class Logger {
      * @param c   context
      * @param msg message
      */
-    public static void log(Context c, String msg) {
+    static void log(Context c, String msg) {
         appendMessage(c, msg);
     }
 
@@ -127,7 +127,7 @@ public class Logger {
      * @param c      context
      * @param stream stream
      */
-    public static void log(Context c, InputStream stream) {
+    static void log(Context c, InputStream stream) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));

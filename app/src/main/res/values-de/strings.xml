@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_version">version %1$s</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_help">Hilfe</string>
+    <string name="action_about">Darüber</string>
+    <string name="action_menu">Menü</string>
+    <string name="title_activity_about">Darüber</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="checkbox_tzdata">TZ-Daten</string>
+    <string name="checkbox_icu">ICU-Daten</string>
+    <string name="start_button">AKTUALISIEREN</string>
+    <string name="gui_preferences">Schnittstelle</string>
+    <string name="title_language">Sprache</string>
+    <string name="dialog_title_language">Sprache wählen</string>
+    <string name="title_theme">Thema</string>
+    <string name="dialog_title_theme">Thema wählen</string>
+    <string name="title_fontsize">Schriftgröße</string>
+    <string name="dialog_title_fontsize">Schriftgröße</string>
+    <string name="title_maxlines">Scroll-Größe</string>
+    <string name="dialog_title_maxlines">Scroll-Größe</string>
+    <string name="title_timestamp">Zeitstempel</string>
+    <string name="summary_timestamp">Zeitstempel anzeigen</string>
+    <string name="title_confirm_dialog">Aktualisieren</string>
+    <string name="message_confirm_dialog">Zeitzonen aktualisieren starten?</string>
+    <string name="debug_preferences">Debuggen</string>
+    <string name="title_debug">Debug-Modus</string>
+    <string name="summary_debug">Debugging-Informationen anzeigen</string>
+    <string name="title_trace">Trace-Modus</string>
+    <string name="summary_trace">Tracing-Modus aktivieren</string>
+    <string name="title_logger">Protokollierung</string>
+    <string name="summary_logger">Protokolle in einer Datei speichern</string>
+    <string name="title_logfile">Logdatei</string>
+    <string name="dialog_title_logfile">Logdatei</string>
+    <string name="help_text"><b>Hilfe</b>\n\nDiese App lädt Zeitzonen herunter und aktualisiert sie auf die neueste Version auf Ihrem Gerät.\n\nVorgehensweise:\n1. Holen Sie sich Superuser-Privilegien (Root).\n2. Installieren Sie <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Überprüfen Sie Ihre Verbindung zum Internet.\n4. Tippen Sie auf die Schaltfläche UPDATE.\n5. Starten Sie das Gerät neu.\n\n</string>
+    <string name="tzversion_text">Aktuelle Zeitzone:\n%1$s, version %2$s</string>
+    <string name="about_text">Automatische Aktualisierung der Zeitzonen auf Android.\n\nWeitere Informationen finden Sie auf der <a href="https://github.com/meefik/tzupdater">Projektseite</a> oder auf der <a href="https://meefik.github.io/tzupdater">Website des Entwicklers</a>.\n\n&#169; 2015 Anton Skshidlevsky, GPLv3</string>
+</resources>

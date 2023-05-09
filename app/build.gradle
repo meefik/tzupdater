@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 33
     defaultConfig {
         applicationId "ru.meefik.tzupdater"
         minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 21
-        versionName "1.2.0"
+        targetSdkVersion 33
+        versionCode 23
+        versionName "1.3.0"
     }
     buildTypes {
         release {
@@ -17,8 +16,9 @@ android {
     }
     productFlavors {
     }
+    namespace 'ru.meefik.tzupdater'
 }
 
 dependencies {
-    implementation 'com.android.support:design:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 }

@@ -33,8 +33,8 @@
     <string name="title_logfile">Fichier journal</string>
     <string name="dialog_title_logfile">Fichier journal</string>
     <string name="help_text"><b>Aide</b>\n\nCette application télécharge et met à jour les fuseaux horaires à la dernière version sur votre appareil.\n\nProcédure :\n1. Obtenir les droits super-utilisateur (root).\n2. Installer <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Vérifier la connexion à internet.\n4. Appuyer sur le bouton METTRE À JOUR.\n5. Redémarrer l\'appareil.\n\n</string>
-    <string name="tzversion_text">Fuseau horaire actuel :\n%1$s, version %2$s\n</string>
-    <string name="about_text">Mise à jour automatique des fuseaux horaires pour Android.\n\nPour plus d\'informations, aller sur <a href="https://github.com/meefik/tzupdater">la page du projet</a>, <a href="http://4pda.ru/forum/index.php?showtopic=692805">le forum</a> ou <a href="http://meefik.ru">le site du développeur</a>.\n\n&#169; 2015 Anton Skshidlevsky, GPLv3</string>
+    <string name="tzversion_text">Fuseau horaire actuel:\n%1$s, version %2$s\n</string>
+    <string name="about_text">Mise à jour automatique des fuseaux horaires pour Android.\n\nPour plus d\'informations, aller sur <a href="https://github.com/meefik/tzupdater">la page du projet</a> ou <a href="https://meefik.github.io/tzupdater">le site du développeur</a>.\n\n&#169; 2015 Anton Skshidlevsky, GPLv3</string>
 
     <string-array name="theme_entries">
         <item>Sombre</item>

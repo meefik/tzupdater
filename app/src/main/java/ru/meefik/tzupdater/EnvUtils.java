@@ -16,10 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
 
-/**
- * Created by anton on 19.09.15.
- */
 public class EnvUtils {
 
     /**
@@ -51,7 +49,7 @@ public class EnvUtils {
         OutputStream out = null;
         try {
             in = assetManager.open(rootAsset + path);
-            String fullPath = PrefStore.getEnvDir(c) + path;
+            String fullPath = PrefStore.getFilesDir(c) + path;
             out = new FileOutputStream(fullPath);
             byte[] buffer = new byte[1024];
             int read;
@@ -84,7 +82,7 @@ public class EnvUtils {
             if (assets.length == 0) {
                 if (!extractFile(c, rootAsset, path)) return false;
             } else {
-                String fullPath = PrefStore.getEnvDir(c) + path;
+                String fullPath = PrefStore.getFilesDir(c) + path;
                 File dir = new File(fullPath);
                 if (!dir.exists()) dir.mkdir();
                 for (String asset : assets) {
@@ -106,7 +104,7 @@ public class EnvUtils {
     private static void cleanDirectory(File path) {
         if (path == null) return;
         if (path.exists()) {
-            for (File f : path.listFiles()) {
+            for (File f : Objects.requireNonNull(path.listFiles())) {
                 if (f.isDirectory()) cleanDirectory(f);
                 f.delete();
             }
@@ -121,7 +119,7 @@ public class EnvUtils {
     private static void setPermissions(File path) {
         if (path == null) return;
         if (path.exists()) {
-            for (File f : path.listFiles()) {
+            for (File f : Objects.requireNonNull(path.listFiles())) {
                 if (f.isDirectory()) setPermissions(f);
                 f.setReadable(true, false);
                 f.setExecutable(true, false);
@@ -136,8 +134,8 @@ public class EnvUtils {
      * @return false if error
      */
     private static Boolean setVersion(Context c) {
-        Boolean result = false;
-        String f = PrefStore.getEnvDir(c) + "/etc/version";
+        boolean result = false;
+        String f = PrefStore.getFilesDir(c) + "/etc/version";
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(f));
@@ -158,8 +156,8 @@ public class EnvUtils {
      * @return false if error
      */
     private static Boolean isLatestVersion(Context c) {
-        Boolean result = false;
-        String f = PrefStore.getEnvDir(c) + "/etc/version";
+        boolean result = false;
+        String f = PrefStore.getFilesDir(c) + "/etc/version";
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(f));
@@ -179,46 +177,40 @@ public class EnvUtils {
      * @param c context
      * @return false if error
      */
-    public static boolean update(Context c) {
+    static boolean update(Context c) {
         if (isLatestVersion(c)) return true;
 
         // prepare env directory
-        File fEnvDir = new File(PrefStore.getEnvDir(c));
-        fEnvDir.mkdirs();
-        if (!fEnvDir.exists()) {
-            return false;
+        String binDir = PrefStore.getFilesDir(c) + "/bin";
+        File fd = new File(binDir);
+        if (!fd.exists()) {
+            if (!fd.mkdirs()) return false;
         }
-        cleanDirectory(fEnvDir);
+        cleanDirectory(fd);
 
         // extract assets
         if (!extractDir(c, "all", "")) {
             return false;
         }
-        String mArch = PrefStore.getArch(System.getProperty("os.arch"));
+        String mArch = PrefStore.getArch();
+        if (Objects.equals(mArch, "arm64")) mArch = "arm";
+        if (Objects.equals(mArch, "x86_64")) mArch = "x86";
         if (!extractDir(c, mArch, "")) {
             return false;
         }
 
+        // create .nomedia
+        File noMedia = new File(PrefStore.getFilesDir(c) + "/.nomedia");
+        try {
+            noMedia.createNewFile();
+        } catch (IOException ignored) {
+        }
+
         // set permissions
-        setPermissions(fEnvDir);
+        setPermissions(fd);
 
         // update version
         return setVersion(c);
-    }
-
-    /**
-     * Remove env directory
-     *
-     * @param c context
-     * @return false if error
-     */
-    public static boolean remove(Context c) {
-        File fEnvDir = new File(PrefStore.getEnvDir(c));
-        if (!fEnvDir.exists()) {
-            return false;
-        }
-        cleanDirectory(fEnvDir);
-        return true;
     }
 
     /**
@@ -227,7 +219,7 @@ public class EnvUtils {
      * @param c context
      * @return false if error
      */
-    public static boolean isRooted(Context c) {
+    static boolean isRooted(Context c) {
         boolean result = false;
         OutputStream stdin = null;
         InputStream stdout = null;
@@ -270,7 +262,7 @@ public class EnvUtils {
             close(stdout);
             close(stdin);
         }
-        if (result == false) {
+        if (!result) {
             Logger.log(c, "Require superuser privileges (root).\n");
         }
         return result;
@@ -283,7 +275,7 @@ public class EnvUtils {
      * @param params list of commands
      * @return false if error
      */
-    public static boolean exec(final Context c, final String shell, final List<String> params) {
+    static boolean exec(final Context c, final String shell, final List<String> params) {
         if (params == null || params.size() == 0) {
             Logger.log(c, "No scripts for processing.\n");
             return false;
@@ -299,7 +291,7 @@ public class EnvUtils {
             stdout = process.getInputStream();
             stderr = process.getErrorStream();
 
-            params.add(0, "PATH=" + PrefStore.getEnvDir(c) + "/bin:$PATH");
+            params.add(0, "PATH=" + PrefStore.getFilesDir(c) + "/bin:$PATH");
             params.add("exit $?");
             if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
 

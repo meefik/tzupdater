@@ -8,13 +8,11 @@ import android.content.res.Configuration;
 import android.os.Environment;
 
 import java.util.Locale;
+import java.util.Objects;
 
-/**
- * Created by anton on 18.09.15.
- */
 public class PrefStore {
 
-    public static final String APP_PREF_NAME = "app_settings";
+    static final String APP_PREF_NAME = "app_settings";
 
     /**
      * Get application version
@@ -22,7 +20,7 @@ public class PrefStore {
      * @param c context
      * @return version, format versionName-versionCode
      */
-    public static String getVersion(Context c) {
+    static String getVersion(Context c) {
         String version = "";
         try {
             PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
@@ -38,7 +36,7 @@ public class PrefStore {
      *
      * @return path
      */
-    public static String getStorage() {
+    static String getStorage() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
@@ -48,7 +46,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/com.example.app/files
      */
-    public static String getEnvDir(Context c) {
+    static String getFilesDir(Context c) {
         return c.getFilesDir().getAbsolutePath();
     }
 
@@ -58,12 +56,14 @@ public class PrefStore {
      * @param c context
      * @return language code, e.g. "en"
      */
-    public static String getLanguage(Context c) {
+    static String getLanguage(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String language = pref.getString("language", c.getString(R.string.language));
         if (language.isEmpty()) {
             String countryCode = Locale.getDefault().getLanguage();
             switch (countryCode) {
+                case "de":
+                case "fr":
                 case "ru":
                     language = countryCode;
                     break;
@@ -83,19 +83,10 @@ public class PrefStore {
      * @param c context
      * @return resource id
      */
-    public static int getTheme(Context c) {
+    static int getTheme(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String theme = pref.getString("theme", c.getString(R.string.theme));
-        int themeId = R.style.DarkTheme;
-        switch (theme) {
-            case "dark":
-                themeId = R.style.DarkTheme;
-                break;
-            case "light":
-                themeId = R.style.LightTheme;
-                break;
-        }
-        return themeId;
+        return Objects.equals(theme, "light") ? R.style.LightTheme : R.style.DarkTheme;
     }
 
     /**
@@ -104,8 +95,8 @@ public class PrefStore {
      * @param c context
      * @return font size
      */
-    public static int getFontSize(Context c) {
-        Integer fontSizeInt;
+    static int getFontSize(Context c) {
+        int fontSizeInt;
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String fontSize = pref.getString("fontsize", c.getString(R.string.fontsize));
         try {
@@ -126,8 +117,8 @@ public class PrefStore {
      * @param c context
      * @return number of lines
      */
-    public static int getMaxLines(Context c) {
-        Integer maxLinesInt;
+    static int getMaxLines(Context c) {
+        int maxLinesInt;
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String maxLines = pref.getString("maxlines", c.getString(R.string.maxlines));
         try {
@@ -148,7 +139,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isTimestamp(Context c) {
+    static boolean isTimestamp(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean("timestamp", c.getString(R.string.timestamp).equals("true"));
     }
@@ -159,7 +150,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isDebugMode(Context c) {
+    static boolean isDebugMode(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean("debug", c.getString(R.string.debug).equals("true"));
     }
@@ -170,10 +161,10 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isTraceMode(Context c) {
+    static boolean isTraceMode(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean("debug", c.getString(R.string.debug).equals("true")) &&
-               pref.getBoolean("trace", c.getString(R.string.trace).equals("true"));
+                pref.getBoolean("trace", c.getString(R.string.trace).equals("true"));
     }
 
     /**
@@ -182,7 +173,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isLogger(Context c) {
+    static boolean isLogger(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean("logger", c.getString(R.string.logger).equals("true"));
     }
@@ -193,7 +184,7 @@ public class PrefStore {
      * @param c context
      * @return path
      */
-    public static String getLogFile(Context c) {
+    static String getLogFile(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE);
         String logFile = pref.getString("logfile", c.getString(R.string.logfile));
         if (logFile.isEmpty()) {
@@ -209,25 +200,26 @@ public class PrefStore {
      * Get hardware architecture
      *
      * @param arch unformated architecture
-     * @return intel, arm or mips
+     * @return arm, arm_64, x86, x86_64
      */
-    public static String getArch(String arch) {
-        String march = "";
-        if (!arch.isEmpty()) {
+    private static String getArch(String arch) {
+        String march = "unknown";
+        if (arch.length() > 0) {
             char a = arch.toLowerCase().charAt(0);
             switch (a) {
                 case 'a':
-                    if (arch.equals("amd64"))
-                        march = "intel";
-                    else
-                        march = "arm";
-                    break;
-                case 'm':
-                    march = "mips";
+                    if (arch.equals("amd64")) march = "x86_64";
+                    else if (arch.contains("64")) march = "arm64";
+                    else march = "arm";
                     break;
                 case 'i':
                 case 'x':
-                    march = "intel";
+                    if (arch.contains("64")) march = "x86_64";
+                    else march = "x86";
+                    break;
+                case 'm':
+                    if (arch.contains("64")) march = "mips64";
+                    else march = "mips";
                     break;
             }
         }
@@ -235,11 +227,20 @@ public class PrefStore {
     }
 
     /**
+     * Get current hardware architecture
+     *
+     * @return arm, arm_64, x86, x86_64
+     */
+    static String getArch() {
+        return getArch(Objects.requireNonNull(System.getProperty("os.arch")));
+    }
+
+    /**
      * Set application locale
      *
      * @param c context
      */
-    public static void setLocale(Context c) {
+    static void setLocale(Context c) {
         String language = getLanguage(c);
         Locale locale = new Locale(language);
         Locale.setDefault(locale);

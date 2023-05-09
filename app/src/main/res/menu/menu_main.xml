@@ -2,29 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_more"
-        android:icon="?attr/ic_action_more"
-        android:orderInCategory="100"
-        android:title="@string/action_menu"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_settings"
-                android:orderInCategory="100"
-                android:title="@string/action_settings"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/action_help"
-                android:orderInCategory="100"
-                android:title="@string/action_help"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/action_about"
-                android:orderInCategory="100"
-                android:title="@string/action_about"
-                app:showAsAction="never" />
+        android:id="@+id/action_help"
+        android:title="@string/action_help"
+        app:showAsAction="ifRoom|withText" />
 
-        </menu>
-    </item>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings" />
+
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/action_about" />
 
 </menu>

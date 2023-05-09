@@ -2,10 +2,10 @@
     <string name="fontsize" translatable="false">12</string>
     <string name="maxlines" translatable="false">100</string>
     <string name="timestamp" translatable="false">false</string>
-    <string name="language" translatable="false"></string>
+    <string name="language" translatable="false" />
     <string name="theme" translatable="false">dark</string>
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
     <string name="logger" translatable="false">false</string>
-    <string name="logfile" translatable="false"></string>
+    <string name="logfile" translatable="false" />
 </resources>
